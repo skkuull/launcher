@@ -1,5 +1,37 @@
 function initialize() {
-    loadNavigationPage("s1x");
+    initializeNavigation();
+}
+
+function initializeNavigation() {
+    var elements = document.querySelectorAll("#navigation>.element");
+    elements.forEach(e => {
+        e.addEventListener("click", handleNavigationClick);
+    });
+
+    loadInitialPage();
+}
+
+function removeActiveElement() {
+    var element = document.querySelector("#navigation>.element.active");
+    if (element) {
+        element.classList.remove("active");
+    }
+}
+
+function handleNavigationClick(e) {
+    const el = e.target;
+    if (el.classList.contains("active")) {
+        return;
+    }
+
+    removeActiveElement();
+    el.classList.add("active");
+    loadNavigationPage(el.id);
+}
+
+function loadInitialPage() {
+    const el = document.querySelector("#navigation>.element.active");
+    loadNavigationPage(el.id);
 }
 
 function loadNavigationPage(page) {

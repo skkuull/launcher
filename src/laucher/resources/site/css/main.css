@@ -36,17 +36,36 @@ body {
     text-align: center;
 }
 
+#navigation>.separator {
+    width: calc(100% + 40px);
+    height: 1px;
+    display: block;
+    background: #F5F6FF;
+    margin-left: -20px;
+    margin-right: -20px;
+    z-index: 0;
+    position: relative;
+}
+
 #navigation>.element {
+    z-index: 1;
+    position: relative;
     margin: auto;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
+    margin-top: 20px;
     border-radius: 15px;
     display: block;
     width: 7vw;
     box-shadow: 0 9px 19px rgba(0, 0, 0, 0.1), 0 15px 12px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s linear;
+    transition: box-shadow 0.1s linear;
 }
 
-#navigation>.element:hover {
+#navigation>.element:first-of-type {
+    margin-top: 0px;
+}
+
+#navigation>.element:hover,
+#navigation>.element.active {
     box-shadow: 0 0px 0px rgba(0, 0, 0, 0), 0 0px 0px rgba(0, 0, 0, 0);
 }
 

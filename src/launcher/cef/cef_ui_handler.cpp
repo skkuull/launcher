@@ -79,9 +79,4 @@ namespace cef
 
 		return true;
 	}
-
-	bool cef_ui_handler::OnProcessMessageReceived(CefRefPtr<CefBrowser> /*browser*/, CefProcessId /*sourceProcess*/, CefRefPtr<CefProcessMessage> /*message*/)
-	{
-		return false;
-	}
 }

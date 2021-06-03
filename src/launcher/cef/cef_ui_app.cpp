@@ -17,6 +17,7 @@ namespace cef
 
 	void cef_ui_app::OnBeforeCommandLineProcessing(const CefString& /*process_type*/, CefRefPtr<CefCommandLine> command_line)
 	{
+		command_line->AppendSwitch("disable-web-security");
 		command_line->AppendSwitch("enable-experimental-web-platform-features");
 		command_line->AppendSwitch("in-process-gpu");
 		command_line->AppendSwitch("enable-media-stream");

@@ -77,7 +77,6 @@ namespace cef
 
 		CefBrowserSettings browser_settings;
 		//browser_settings.windowless_frame_rate = 60;
-		browser_settings.web_security = STATE_DISABLED;
 
 		CefWindowInfo window_info;
 		window_info.SetAsPopup(nullptr, "X Labs");
@@ -93,7 +92,21 @@ namespace cef
 		}
 
 		this->browser_ = CefBrowserHost::CreateBrowserSync(window_info, this->ui_handler_, url, browser_settings,
-		                                                   nullptr);
+		                                                   nullptr, nullptr);
+
+
+		this->set_window_icon();
+	}
+
+	void cef_ui::set_window_icon() const
+	{
+		auto* const window = this->get_window();
+		if (!window) return;
+
+		const auto icon = reinterpret_cast<LPARAM>(LoadIconA(this->process_.get_handle(), MAKEINTRESOURCEA(IDI_ICON_1))
+		);
+		SendMessageA(window, WM_SETICON, ICON_SMALL, icon);
+		SendMessageA(window, WM_SETICON, ICON_BIG, icon);
 	}
 
 	HWND cef_ui::get_window() const

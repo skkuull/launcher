@@ -21,12 +21,11 @@ namespace cef
 				utils::nt::library::set_dll_directory(old_directory);
 			});
 
-			if (!utils::nt::library::load("libcef.dll"s))
+			if (!utils::nt::library::load("libcef.dll"s) //
+				|| !utils::nt::library::delay_load("libcef.dll"))
 			{
 				throw std::runtime_error("Failed to load CEF");
 			}
-
-			utils::nt::library::delay_load("libcef.dll");
 		}
 	}
 

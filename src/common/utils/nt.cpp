@@ -225,9 +225,16 @@ namespace utils::nt
 		return directory;
 	}
 
-	void library::delay_load(const std::string& library)
+	bool library::delay_load(const std::string& library)
 	{
-		__HrLoadAllImportsForDll(library.data());
+		__try
+		{
+			return SUCCEEDED(__HrLoadAllImportsForDll(library.data()));
+		}
+		__except (EXCEPTION_EXECUTE_HANDLER)
+		{
+			return false;
+		}
 	}
 
 	void raise_hard_exception()

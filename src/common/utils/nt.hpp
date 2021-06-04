@@ -100,7 +100,7 @@ namespace utils::nt
 
 		static void set_dll_directory(const std::string& directory);
 		static std::string get_dll_directory();
-		static void delay_load(const std::string& library);
+		static bool delay_load(const std::string& library);
 
 	private:
 		HMODULE module_;

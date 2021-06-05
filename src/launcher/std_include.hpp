@@ -8,6 +8,7 @@
 #endif
 
 #include <Windows.h>
+#include <ShlObj.h>
 
 #include <string>
 #include <mutex>

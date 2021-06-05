@@ -65,11 +65,11 @@ namespace cef
 #endif
 
 		CefString(&settings.browser_subprocess_path) = this->process_.get_path();
-		CefString(&settings.locales_dir_path) = this->path_ + "\\cef\\locales";
-		CefString(&settings.resources_dir_path) = this->path_ + "\\cef";
-		CefString(&settings.log_file) = this->path_ + "\\cef_data\\debug.log";
-		CefString(&settings.user_data_path) = this->path_ + "\\cef_data\\user";
-		CefString(&settings.cache_path) = this->path_ + "\\cef_data\\cache";
+		CefString(&settings.locales_dir_path) = this->path_ + "cef\\locales";
+		CefString(&settings.resources_dir_path) = this->path_ + "cef";
+		CefString(&settings.log_file) = this->path_ + "cef_data\\debug.log";
+		CefString(&settings.user_data_path) = this->path_ + "cef_data\\user";
+		CefString(&settings.cache_path) = this->path_ + "cef_data\\cache";
 		CefString(&settings.locale) = "en-US";
 
 		this->initialized_ = CefInitialize(args, settings, new cef_ui_app(), nullptr);
@@ -102,8 +102,7 @@ namespace cef
 		auto* const window = this->get_window();
 		if (!window) return;
 
-		const auto icon = reinterpret_cast<LPARAM>(LoadIconA(this->process_.get_handle(), MAKEINTRESOURCEA(IDI_ICON_1))
-		);
+		const auto icon = LPARAM(LoadIconA(this->process_.get_handle(), MAKEINTRESOURCEA(IDI_ICON_1)));
 		SendMessageA(window, WM_SETICON, ICON_SMALL, icon);
 		SendMessageA(window, WM_SETICON, ICON_BIG, icon);
 	}
@@ -136,8 +135,8 @@ namespace cef
 	cef_ui::cef_ui(utils::nt::library process)
 		: process_(std::move(process))
 	{
-		this->path_ = this->process_.get_folder();
-		delay_load_cef(this->path_ + "\\cef");
+		this->path_ = this->process_.get_folder() + "/";
+		delay_load_cef(this->path_ + "cef");
 
 		CefEnableHighDPISupport();
 	}

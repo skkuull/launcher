@@ -2,5 +2,5 @@
 
 namespace updater
 {
-	void run();
+	void run(HINSTANCE instance);
 }

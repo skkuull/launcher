@@ -32,16 +32,11 @@ namespace utils::com
 
 	bool select_folder(std::string& out_folder, const std::string& title, const std::string& selected_folder)
 	{
-		IFileOpenDialog* file_dialog = nullptr;
+		CComPtr<IFileOpenDialog> file_dialog{};
 		if(FAILED(CoCreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&file_dialog))))
 		{
 			throw std::runtime_error("Failed to create co instance");
 		}
-
-		const auto $1 = gsl::finally([file_dialog]()
-		{
-			file_dialog->Release();
-		});
 
 		DWORD dw_options;
 		if(FAILED(file_dialog->GetOptions(&dw_options)))
@@ -96,16 +91,11 @@ namespace utils::com
 			throw std::runtime_error("Failed to show dialog");
 		}
 
-		IShellItem* result_item = nullptr;
+		CComPtr<IShellItem> result_item{};
 		if(FAILED(file_dialog->GetResult(&result_item)))
 		{
 			throw std::runtime_error("Failed to get result");
 		}
-
-		const auto $2 = gsl::finally([result_item]()
-		{
-			result_item->Release();
-		});
 
 		PWSTR raw_path = nullptr;
 		if(FAILED(result_item->GetDisplayName(SIGDN_FILESYSPATH, &raw_path)))
@@ -113,7 +103,7 @@ namespace utils::com
 			throw std::runtime_error("Failed to get path display name");
 		}
 
-		const auto $3 = gsl::finally([raw_path]()
+		const auto _ = gsl::finally([raw_path]()
 		{
 			CoTaskMemFree(raw_path);
 		});
@@ -126,12 +116,12 @@ namespace utils::com
 
 	CComPtr<IProgressDialog> create_progress_dialog()
 	{
-		IProgressDialog* progress_dialog{};
+		CComPtr<IProgressDialog> progress_dialog{};
 		if(FAILED(CoCreateInstance(CLSID_ProgressDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&progress_dialog))))
 		{
 			throw std::runtime_error("Failed to create co instance");
 		}
 
-		return {progress_dialog};
+		return progress_dialog;
 	}
 }

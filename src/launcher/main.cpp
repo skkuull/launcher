@@ -65,12 +65,12 @@ int CALLBACK WinMain(const HINSTANCE instance, HINSTANCE, LPSTR, int)
 	try
 	{
 		const utils::nt::library lib{instance};
-		
+
 		if (is_subprocess())
 		{
 			return run_subprocess(lib);
 		}
-		
+
 		enable_dpi_awareness();
 		updater::run();
 		show_window(lib);

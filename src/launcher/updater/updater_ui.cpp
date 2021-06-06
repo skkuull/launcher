@@ -8,7 +8,7 @@ namespace updater
 	ui::ui()
 	{
 		this->dialog_ = utils::com::create_progress_dialog();
-		if(!this->dialog_)
+		if (!this->dialog_)
 		{
 			throw std::runtime_error{"Failed to create dialog"};
 		}

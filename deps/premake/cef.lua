@@ -44,7 +44,7 @@ function cef.project()
 			"copy /y \"%{wks.location}..\\deps\\cef\\Resources\\locales\\*.pak\" \"%{wks.location}runtime\\%{cfg.platform}\\%{cfg.buildcfg}\\cef\\locales\\\"",
 		}
 
-		linkoptions { "-IGNORE:4221" }
+		linkoptions { "-IGNORE:4221", "-IGNORE:4006" }
 		removelinks "*"
 		warnings "Off"
 		kind "StaticLib"

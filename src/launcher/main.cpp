@@ -75,7 +75,7 @@ int CALLBACK WinMain(const HINSTANCE instance, HINSTANCE, LPSTR, int)
 		}
 
 		enable_dpi_awareness();
-		//updater::run();
+		updater::run();
 		show_window(lib, path);
 		return 0;
 	}

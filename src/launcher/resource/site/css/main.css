@@ -5,6 +5,11 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     width: 100%;
     height: 100%;
+    user-select: none;
+}
+
+img {
+    -webkit-user-drag: none;
 }
 
 .container {

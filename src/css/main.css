@@ -1,0 +1,80 @@
+html,
+body {
+    margin: 0;
+    background: #F5F6FF;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    width: 100%;
+    height: 100%;
+    user-select: none;
+}
+
+img {
+    -webkit-user-drag: none;
+}
+
+.container {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 15px;
+    display: inline-block;
+    min-width: 50px;
+    min-height: 25px;
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.03), 0 15px 12px rgba(0, 0, 0, 0.03);
+}
+
+#container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#navigation {
+    height: 100%;
+    max-height: 100%;
+    background: white;
+    display: inline-block;
+    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.03), 0 15px 12px rgba(0, 0, 0, 0.03);
+    margin-right: 15px;
+    padding: 20px;
+    text-align: center;
+}
+
+#navigation>.separator {
+    width: calc(100% + 40px);
+    height: 1px;
+    display: block;
+    background: #F5F6FF;
+    margin-left: -20px;
+    margin-right: -20px;
+    z-index: 0;
+    position: relative;
+}
+
+#navigation>.element {
+    z-index: 1;
+    position: relative;
+    margin: auto;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    border-radius: 15px;
+    display: block;
+    width: 7vw;
+    box-shadow: 0 9px 19px rgba(0, 0, 0, 0.1), 0 15px 12px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.1s linear;
+}
+
+#navigation>.element:first-of-type {
+    margin-top: 0px;
+}
+
+#navigation>.element:hover,
+#navigation>.element.active {
+    box-shadow: 0 0px 0px rgba(0, 0, 0, 0), 0 0px 0px rgba(0, 0, 0, 0);
+}
+
+#content {
+    height: 100%;
+    display: inline-block;
+}

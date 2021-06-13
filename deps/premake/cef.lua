@@ -3,8 +3,10 @@ cef = {
 }
 
 function cef.import()
+	filter {"kind:not StaticLib" }
 	links { "cef", "cef_sandbox", "libcef" }
 	linkoptions { "/DELAYLOAD:libcef.dll" }
+	filter {}
 	cef.includes()
 end
 

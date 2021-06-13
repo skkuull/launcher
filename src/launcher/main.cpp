@@ -20,7 +20,7 @@ namespace
 	void show_window(const utils::nt::library& process)
 	{
 		cef::cef_ui cef_ui{process};
-		cef_ui.create("http://localhost/site/main.html");
+		cef_ui.create("C:/Users/mahe/Documents/Privat/Projekte/launcher/src/launcher/resource/site", "main.html");
 		cef_ui.work();
 	}
 
@@ -72,7 +72,7 @@ int CALLBACK WinMain(const HINSTANCE instance, HINSTANCE, LPSTR, int)
 		}
 
 		enable_dpi_awareness();
-		updater::run();
+		//updater::run();
 		show_window(lib);
 		return 0;
 	}

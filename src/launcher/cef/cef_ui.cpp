@@ -3,9 +3,9 @@
 #include "cef/cef_ui.hpp"
 #include "cef/cef_ui_app.hpp"
 #include "cef/cef_ui_handler.hpp"
+#include "cef/cef_ui_scheme_handler.hpp"
 
 #include <utils/nt.hpp>
-
 #include <utils/string.hpp>
 
 namespace cef
@@ -45,7 +45,7 @@ namespace cef
 		return CefExecuteProcess(args, nullptr, nullptr);
 	}
 
-	void cef_ui::create(const std::string& url)
+	void cef_ui::create(const std::string& folder, const std::string& file)
 	{
 		if (this->browser_) return;
 
@@ -73,6 +73,7 @@ namespace cef
 		CefString(&settings.locale) = "en-US";
 
 		this->initialized_ = CefInitialize(args, settings, new cef_ui_app(), nullptr);
+		CefRegisterSchemeHandlerFactory("http", "xlabs", new cef_ui_scheme_handler_factory(folder));
 
 		CefBrowserSettings browser_settings;
 		//browser_settings.windowless_frame_rate = 60;
@@ -90,9 +91,9 @@ namespace cef
 			this->ui_handler_ = new cef_ui_handler();
 		}
 
+		const auto url = "http://xlabs/" + file;
 		this->browser_ = CefBrowserHost::CreateBrowserSync(window_info, this->ui_handler_, url, browser_settings,
 		                                                   nullptr, nullptr);
-
 
 		this->set_window_icon();
 	}

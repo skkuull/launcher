@@ -7,7 +7,7 @@ namespace cef
 	{
 	public:
 		explicit cef_ui_handler();
-		~cef_ui_handler();
+		~cef_ui_handler() override;
 
 		CefRefPtr<CefDisplayHandler> GetDisplayHandler() override
 		{

@@ -4,10 +4,7 @@
 
 namespace cef
 {
-	cef_ui_app::cef_ui_app()
-	{
-
-	}
+	cef_ui_app::cef_ui_app() = default;
 
 	void cef_ui_app::OnContextInitialized()
 	{

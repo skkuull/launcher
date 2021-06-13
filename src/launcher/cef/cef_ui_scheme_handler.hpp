@@ -1,6 +1,4 @@
 #pragma once
-#include <include/cef_scheme.h>
-#include <include/wrapper/cef_helpers.h>
 
 namespace cef
 {

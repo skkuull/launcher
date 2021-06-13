@@ -1,7 +1,5 @@
 #pragma once
 
-#include "cef/cef_ui.hpp"
-
 namespace cef
 {
 	class cef_ui_app : public CefApp, public CefBrowserProcessHandler

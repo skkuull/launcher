@@ -8,12 +8,21 @@
 #include <utils/nt.hpp>
 #include <utils/string.hpp>
 
+#define CEF_PATH "cef/" CONFIG_NAME
+
 namespace cef
 {
 	namespace
 	{
 		void delay_load_cef(const std::string& path)
 		{
+			static std::atomic<bool> initialized{false};
+			bool uninitialized = false;
+			if (!initialized.compare_exchange_strong(uninitialized, true))
+			{
+				return;
+			}
+			
 			const auto old_directory = utils::nt::library::get_dll_directory();
 			utils::nt::library::set_dll_directory(path);
 			auto _ = gsl::finally([&]()
@@ -65,11 +74,11 @@ namespace cef
 #endif
 
 		CefString(&settings.browser_subprocess_path) = this->process_.get_path();
-		CefString(&settings.locales_dir_path) = this->path_ + "cef\\locales";
-		CefString(&settings.resources_dir_path) = this->path_ + "cef";
-		CefString(&settings.log_file) = this->path_ + "cef_data\\debug.log";
-		CefString(&settings.user_data_path) = this->path_ + "cef_data\\user";
-		CefString(&settings.cache_path) = this->path_ + "cef_data\\cache";
+		CefString(&settings.locales_dir_path) = this->path_ + (CEF_PATH "/locales");
+		CefString(&settings.resources_dir_path) = this->path_ + CEF_PATH;
+		CefString(&settings.log_file) = this->path_ + "cef-data/debug.log";
+		CefString(&settings.user_data_path) = this->path_ + "cef-data/user";
+		CefString(&settings.cache_path) = this->path_ + "cef-data/cache";
 		CefString(&settings.locale) = "en-US";
 
 		this->initialized_ = CefInitialize(args, settings, new cef_ui_app(), nullptr);
@@ -133,12 +142,10 @@ namespace cef
 		this->browser_->Reload();
 	}
 
-	cef_ui::cef_ui(utils::nt::library process)
-		: process_(std::move(process))
+	cef_ui::cef_ui(utils::nt::library process, std::string path)
+		: process_(std::move(process)), path_(std::move(path))
 	{
-		this->path_ = this->process_.get_folder() + "/";
-		delay_load_cef(this->path_ + "cef");
-
+		delay_load_cef(this->path_ + CEF_PATH);
 		CefEnableHighDPISupport();
 	}
 

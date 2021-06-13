@@ -2,8 +2,6 @@
 
 #include "cef/cef_ui_scheme_handler.hpp"
 
-#include <include/cef_parser.h>
-#include <include/wrapper/cef_stream_resource_handler.h>
 #include <utils/io.hpp>
 
 namespace cef
@@ -391,9 +389,9 @@ namespace cef
 	{
 	}
 
-	CefRefPtr<CefResourceHandler> cef_ui_scheme_handler_factory::Create(CefRefPtr<CefBrowser> browser,
-                                                                    CefRefPtr<CefFrame> frame,
-                                                                    const CefString& scheme_name,
+	CefRefPtr<CefResourceHandler> cef_ui_scheme_handler_factory::Create(CefRefPtr<CefBrowser> /*browser*/,
+                                                                    CefRefPtr<CefFrame> /*frame*/,
+                                                                    const CefString& /*scheme_name*/,
                                                                     CefRefPtr<CefRequest> request)
 	{
 		CEF_REQUIRE_IO_THREAD();

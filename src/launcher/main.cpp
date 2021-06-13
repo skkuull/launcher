@@ -11,16 +11,16 @@ namespace
 		return strstr(GetCommandLineA(), "--xlabs-subprocess");
 	}
 
-	int run_subprocess(const utils::nt::library& process)
+	int run_subprocess(const utils::nt::library& process, const std::string& path)
 	{
-		const cef::cef_ui cef_ui{process};
+		const cef::cef_ui cef_ui{process, path};
 		return cef_ui.run_process();
 	}
 
-	void show_window(const utils::nt::library& process)
+	void show_window(const utils::nt::library& process, const std::string& path)
 	{
-		cef::cef_ui cef_ui{process};
-		cef_ui.create("C:/Users/mahe/Documents/Privat/Projekte/launcher/src/launcher/resource/site", "main.html");
+		cef::cef_ui cef_ui{process, path};
+		cef_ui.create(path + "launcher-ui", "main.html");
 		cef_ui.work();
 	}
 
@@ -37,7 +37,7 @@ namespace
 			CoTaskMemFree(path);
 		});
 
-		return utils::string::convert(path) + "/xlabs";
+		return utils::string::convert(path) + "/xlabs/";
 	}
 
 	void set_working_directory()
@@ -64,16 +64,19 @@ int CALLBACK WinMain(const HINSTANCE instance, HINSTANCE, LPSTR, int)
 {
 	try
 	{
+		//set_working_directory();
+		
 		const utils::nt::library lib{instance};
+		const auto path = get_appdata_path();
 
 		if (is_subprocess())
 		{
-			return run_subprocess(lib);
+			return run_subprocess(lib, path);
 		}
 
 		enable_dpi_awareness();
 		//updater::run();
-		show_window(lib);
+		show_window(lib, path);
 		return 0;
 	}
 	catch (std::exception& e)

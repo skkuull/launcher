@@ -16,7 +16,8 @@ namespace cef
 		command_line->AppendSwitch("xlabs-subprocess");
 	}
 
-	void cef_ui_app::OnBeforeCommandLineProcessing(const CefString& /*process_type*/, CefRefPtr<CefCommandLine> command_line)
+	void cef_ui_app::OnBeforeCommandLineProcessing(const CefString& /*process_type*/,
+	                                               CefRefPtr<CefCommandLine> command_line)
 	{
 		command_line->AppendSwitch("enable-experimental-web-platform-features");
 		command_line->AppendSwitch("in-process-gpu");

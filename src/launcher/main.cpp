@@ -65,7 +65,7 @@ int CALLBACK WinMain(const HINSTANCE instance, HINSTANCE, LPSTR, int)
 	try
 	{
 		//set_working_directory();
-		
+
 		const utils::nt::library lib{instance};
 		const auto path = get_appdata_path();
 

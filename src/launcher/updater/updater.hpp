@@ -2,7 +2,8 @@
 
 namespace updater
 {
-	class update_canceled : public std::runtime_error {
+	class update_canceled : public std::runtime_error
+	{
 	public:
 		update_canceled();
 	};

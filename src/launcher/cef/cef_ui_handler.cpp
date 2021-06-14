@@ -7,12 +7,10 @@ namespace cef
 {
 	cef_ui_handler::cef_ui_handler()
 	{
-
 	}
 
 	cef_ui_handler::~cef_ui_handler()
 	{
-
 	}
 
 	void cef_ui_handler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
@@ -46,31 +44,35 @@ namespace cef
 		return false;
 	}
 
-	void cef_ui_handler::OnBeforeContextMenu(CefRefPtr<CefBrowser> /*browser*/, CefRefPtr<CefFrame> /*frame*/, CefRefPtr<CefContextMenuParams> /*params*/, CefRefPtr<CefMenuModel> model)
+	void cef_ui_handler::OnBeforeContextMenu(CefRefPtr<CefBrowser> /*browser*/, CefRefPtr<CefFrame> /*frame*/,
+	                                         CefRefPtr<CefContextMenuParams> /*params*/, CefRefPtr<CefMenuModel> model)
 	{
 		model->Clear();
 	}
 
-	bool cef_ui_handler::OnContextMenuCommand(CefRefPtr<CefBrowser> /*browser*/, CefRefPtr<CefFrame> /*frame*/, CefRefPtr<CefContextMenuParams> /*params*/, int /*command_id*/, CefContextMenuHandler::EventFlags /*event_flags*/)
+	bool cef_ui_handler::OnContextMenuCommand(CefRefPtr<CefBrowser> /*browser*/, CefRefPtr<CefFrame> /*frame*/,
+	                                          CefRefPtr<CefContextMenuParams> /*params*/, int /*command_id*/,
+	                                          CefContextMenuHandler::EventFlags /*event_flags*/)
 	{
 		return false;
 	}
 
 	void cef_ui_handler::OnContextMenuDismissed(CefRefPtr<CefBrowser> /*browser*/, CefRefPtr<CefFrame> /*frame*/)
 	{
-
 	}
 
-	bool cef_ui_handler::RunContextMenu(CefRefPtr<CefBrowser> /*browser*/, CefRefPtr<CefFrame> /*frame*/, CefRefPtr<CefContextMenuParams> /*params*/, CefRefPtr<CefMenuModel> /*model*/, CefRefPtr<CefRunContextMenuCallback> /*callback*/)
+	bool cef_ui_handler::RunContextMenu(CefRefPtr<CefBrowser> /*browser*/, CefRefPtr<CefFrame> /*frame*/,
+	                                    CefRefPtr<CefContextMenuParams> /*params*/, CefRefPtr<CefMenuModel> /*model*/,
+	                                    CefRefPtr<CefRunContextMenuCallback> /*callback*/)
 	{
 		return false;
 	}
 
 	bool cef_ui_handler::is_closed(CefRefPtr<CefBrowser> browser)
 	{
-		for(const auto& browser_entry : this->browser_list)
+		for (const auto& browser_entry : this->browser_list)
 		{
-			if(browser_entry == browser)
+			if (browser_entry == browser)
 			{
 				return false;
 			}

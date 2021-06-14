@@ -22,7 +22,7 @@ namespace cef
 			{
 				return;
 			}
-			
+
 			const auto old_directory = utils::nt::library::get_dll_directory();
 			utils::nt::library::set_dll_directory(path);
 			auto _ = gsl::finally([&]()
@@ -108,8 +108,8 @@ namespace cef
 
 		auto window = this->get_window();
 		//std::thread([window]() {
-			//std::this_thread::sleep_for(1000ms);
-			ShowWindow(window, SW_SHOWDEFAULT);
+		//std::this_thread::sleep_for(1000ms);
+		ShowWindow(window, SW_SHOWDEFAULT);
 		//}).detach();
 	}
 

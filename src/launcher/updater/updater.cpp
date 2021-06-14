@@ -92,7 +92,7 @@ std::vector<file_info> get_outdated_files(const std::string &base,
 void update_file(const std::string &base, const file_info &info,
                  const std::function<void(size_t)> &callback) {
   const auto url = UPDATE_FOLDER + info.name;
-  const auto data = utils::http::get_data(url, callback);
+  const auto data = utils::http::get_data(url, {}, callback);
   if (!data) {
     throw std::runtime_error("Failed to download: " + url);
   }

@@ -1,57 +1,78 @@
 #include "http.hpp"
-#include "nt.hpp"
-#include <atlcomcli.h>
-#include <wininet.h>
+#include <curl/curl.h>
+#include <gsl/gsl>
 
-#pragma comment(lib, "Urlmon.lib")
-#pragma comment(lib, "WinInet.lib")
+#pragma comment(lib, "ws2_32.lib")
 
 namespace utils::http
 {
-	std::optional<std::string> get_data(const std::string& url, const std::function<void(size_t)>& callback)
+	namespace
 	{
-		CComPtr<IStream> stream;
-
-		DeleteUrlCacheEntry(url.data());
-		if (FAILED(URLOpenBlockingStreamA(nullptr, url.data(), &stream, 0, nullptr)))
+		struct write_helper
 		{
-			return {};
-		}
-
-		char buffer[0x1000];
-		std::string result;
-
-		HRESULT status{};
-
-		do
+			const std::function<void(size_t)>* callback;
+			std::string* data;
+		};
+	
+		size_t write_callback(void* contents, const size_t size, const size_t nmemb, void* userp)
 		{
-			DWORD bytes_read = 0;
-			status = stream->Read(buffer, sizeof(buffer), &bytes_read);
+			auto* helper = static_cast<write_helper*>(userp);
 
-			if (bytes_read > 0)
+			const auto total_size = size * nmemb;
+			helper->data->append(static_cast<char*>(contents), total_size);
+			if (*helper->callback)
 			{
-				result.append(buffer, bytes_read);
-				if (callback)
-				{
-					callback(result.size());
-				}
+				OutputDebugStringA(std::to_string(total_size).data());
+				(*helper->callback)(helper->data->size());
 			}
+			return total_size;
 		}
-		while (SUCCEEDED(status) && status != S_FALSE);
-
-		if (FAILED(status))
-		{
-			return {};
-		}
-
-		return {result};
 	}
 
-	std::future<std::optional<std::string>> get_data_async(const std::string& url)
+	std::optional<std::string> get_data(const std::string& url, const headers& headers, const std::function<void(size_t)>& callback)
 	{
-		return std::async(std::launch::async, [url]()
+		curl_slist* header_list = nullptr;
+		auto* curl = curl_easy_init();
+		if (!curl)
 		{
-			return get_data(url);
+			return {};
+		}
+
+		auto _ = gsl::finally([&]()
+		{
+			curl_slist_free_all(header_list);
+			curl_easy_cleanup(curl);
+		});
+
+		
+		for(const auto& header : headers)
+		{
+			auto data = header.first + ": " + header.second;
+			header_list = curl_slist_append(header_list, data.data());
+		}
+
+		std::string buffer{};
+		write_helper helper{};
+		helper.data = &buffer;
+		helper.callback = &callback;
+		
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header_list);
+		curl_easy_setopt(curl, CURLOPT_URL, url.data());
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &helper);
+		if (curl_easy_perform(curl) == CURLE_OK)
+		{
+			return {std::move(buffer)};
+		}
+
+		return {};
+	}
+
+	std::future<std::optional<std::string>> get_data_async(const std::string& url, const headers& headers)
+	{
+		return std::async(std::launch::async, [url, headers]()
+		{
+			return get_data(url, headers);
 		});
 	}
 }

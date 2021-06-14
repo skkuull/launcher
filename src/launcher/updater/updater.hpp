@@ -2,5 +2,10 @@
 
 namespace updater
 {
-	void run();
+	class update_canceled : public std::runtime_error {
+	public:
+		update_canceled();
+	};
+
+	void run(const std::string& base);
 }

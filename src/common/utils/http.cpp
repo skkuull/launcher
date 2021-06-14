@@ -1,13 +1,18 @@
 #include "http.hpp"
 #include "nt.hpp"
 #include <atlcomcli.h>
+#include <wininet.h>
+
+#pragma comment(lib, "Urlmon.lib")
+#pragma comment(lib, "WinInet.lib")
 
 namespace utils::http
 {
-	std::optional<std::string> get_data(const std::string& url)
+	std::optional<std::string> get_data(const std::string& url, const std::function<void(size_t)>& callback)
 	{
 		CComPtr<IStream> stream;
 
+		DeleteUrlCacheEntry(url.data());
 		if (FAILED(URLOpenBlockingStreamA(nullptr, url.data(), &stream, 0, nullptr)))
 		{
 			return {};
@@ -26,6 +31,10 @@ namespace utils::http
 			if (bytes_read > 0)
 			{
 				result.append(buffer, bytes_read);
+				if (callback)
+				{
+					callback(result.size());
+				}
 			}
 		}
 		while (SUCCEEDED(status) && status != S_FALSE);

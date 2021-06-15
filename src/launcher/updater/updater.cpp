@@ -132,8 +132,8 @@ namespace updater
 				throw std::runtime_error("Downloaded file is invalid: " + url);
 			}
 
-			auto out_file = info.name;
-			if (out_file != UPDATE_HOST_BINARY)
+			auto out_file = base;
+			if (info.name != UPDATE_HOST_BINARY)
 			{
 				out_file = base + info.name;
 			}

@@ -62,17 +62,19 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "momo5502"
+            VALUE "CompanyName", "X Labs"
 #ifdef _DEBUG
-            VALUE "FileDescription", "Desktop Frame (DEBUG)"
+            VALUE "FileDescription", "X Labs Launcher (DEBUG)"
 #else
-            VALUE "FileDescription", "Desktop Frame"
+            VALUE "FileDescription", "X Labs Launcher"
 #endif
             VALUE "FileVersion", "1.0.0"
-            VALUE "InternalName", "desktopframe"
-            VALUE "LegalCopyright", "Copyright 2017 momo5502. All rights reserved."
-            VALUE "OriginalFilename", "desktopframe.exe"
-            VALUE "ProductName", "Desktop Frame"
+            VALUE "InternalName", "launcher"
+            VALUE "LegalCopyright", "Copyright (C) 2021 X Labs Project. All rights reserved."
+            VALUE "Licence", "GPLv3"
+            VALUE "Info", "https://github.com/XLabsProject/launcher"
+			VALUE "OriginalFilename", "xlabs.exe"
+            VALUE "ProductName", "X Labs Launcher"
             VALUE "ProductVersion", "1.0.0"
         END
     END

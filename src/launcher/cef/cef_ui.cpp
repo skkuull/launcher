@@ -107,10 +107,11 @@ namespace cef
 		this->set_window_icon();
 
 		auto window = this->get_window();
-		//std::thread([window]() {
-		//std::this_thread::sleep_for(1000ms);
-		ShowWindow(window, SW_SHOWDEFAULT);
-		//}).detach();
+		std::thread([window]()
+		{
+			std::this_thread::sleep_for(1000ms);
+			ShowWindow(window, SW_SHOWDEFAULT);
+		}).detach();
 	}
 
 	void cef_ui::set_window_icon() const

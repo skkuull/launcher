@@ -36,7 +36,7 @@ img {
     box-shadow: 0 9px 10px rgba(0, 0, 0, 0), 0 15px 6px rgba(0, 0, 0, 0);
 }
 
-.card > .title {
+.card>.title {
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     padding: 20px;
@@ -45,14 +45,14 @@ img {
     flex: 0 1 auto;
 }
 
-.card > .content {
+.card>.content {
     padding: 20px;
     flex: 1 1 auto;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
 }
 
-.card > .content.img {
+.card>.content.img {
     padding: 0px;
     background-size: cover;
     background-position: center center;
@@ -114,4 +114,29 @@ img {
     width: 100%;
     display: flex;
     padding: 15px;
+}
+
+@media (prefers-color-scheme: dark) {
+
+    html,
+    body {
+        background: #333;
+        color: #bbb;
+    }
+
+    .container {
+        background: #222;
+    }
+
+    .card>.title {
+        background: #222;
+    }
+
+    #navigation {
+        background: #222;
+    }
+
+    #navigation>.separator {
+        background: #333;
+    }
 }

@@ -2,7 +2,8 @@
 #include "cef/cef_ui.hpp"
 #include "updater/updater.hpp"
 
-#include "utils/string.hpp"
+#include <utils/named_mutex.hpp>
+#include <utils/string.hpp>
 
 namespace
 {
@@ -58,6 +59,15 @@ namespace
 			set_dpi(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 		}
 	}
+
+	void run_as_singleton()
+	{
+		static named_mutex mutex{"xlabs-launcher"};
+		if (!mutex.try_lock())
+		{
+			throw std::runtime_error{"X Labs launcher is already running"};
+		}
+	}
 }
 
 int CALLBACK WinMain(const HINSTANCE instance, HINSTANCE, LPSTR, int)
@@ -74,6 +84,7 @@ int CALLBACK WinMain(const HINSTANCE instance, HINSTANCE, LPSTR, int)
 			return run_subprocess(lib, path);
 		}
 
+		run_as_singleton();
 		enable_dpi_awareness();
 		updater::run(path);
 		show_window(lib, path);

@@ -1,24 +1,27 @@
 #pragma once
 
-#include <utils/com.hpp>
+#include "progress_ui.hpp"
+#include "progress_listener.hpp"
 
 namespace updater
 {
-	class ui
+	class updater_ui : public progress_listener
 	{
 	public:
-		ui();
-		~ui();
-
-		void show() const;
-
-		void set_progress(size_t current, size_t max) const;
-		void set_line(int line, const std::string& text) const;
-		void set_title(const std::string& title) const;
-
-		bool is_cancelled() const;
+		updater_ui();
+		~updater_ui();
 
 	private:
-		CComPtr<IProgressDialog> dialog_{};
+		progress_ui progress_ui_{};
+
+		void update_files(const std::vector<file_info>& files) override;
+		void done_update() override;
+		
+		void begin_file(const file_info& file) override;
+		void end_file(const file_info& file) override;
+		
+		void file_progress(const file_info& file, size_t progress) override;
+
+		void handle_cancellation() const;
 	};
 }

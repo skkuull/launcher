@@ -20,7 +20,7 @@ img {
     display: inline-block;
     min-width: 50px;
     min-height: 25px;
-    box-shadow: 0 19px 38px rgba(0, 0, 0, 0.03), 0 15px 12px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 9px 19px rgba(0, 0, 0, 0.1), 0 15px 12px rgba(0, 0, 0, 0.1);
 }
 
 .card {
@@ -28,6 +28,12 @@ img {
     padding: 0px;
     display: flex;
     flex-flow: column;
+    transition: box-shadow 0.1s linear;
+    box-shadow: 0 9px 19px rgba(0, 0, 0, 0.1), 0 15px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    box-shadow: 0 9px 10px rgba(0, 0, 0, 0), 0 15px 6px rgba(0, 0, 0, 0);
 }
 
 .card > .title {

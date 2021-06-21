@@ -7,7 +7,6 @@
 #include <utils/cryptography.hpp>
 #include <utils/http.hpp>
 #include <utils/io.hpp>
-#include <utils/string.hpp>
 
 #define UPDATE_SERVER "https://master.xlabs.dev/"
 #define UPDATE_FILE UPDATE_SERVER "files.json"
@@ -82,8 +81,8 @@ namespace updater
 
 	file_updater::file_updater(progress_listener& listener, std::string base, std::string process_file)
 		: listener_(listener)
-		, base_(std::move(base))
-	    , process_file_(std::move(process_file))
+		  , base_(std::move(base))
+		  , process_file_(std::move(process_file))
 	{
 		this->dead_process_file_ = this->process_file_ + ".old";
 		this->delete_old_process_file();
@@ -109,13 +108,15 @@ namespace updater
 		{
 			this->listener_.file_progress(file, progress);
 		});
-		
-		if (!data || data->size() != file.size || get_hash(*data) != file.hash) {
+
+		if (!data || data->size() != file.size || get_hash(*data) != file.hash)
+		{
 			throw std::runtime_error("Failed to download: " + url);
 		}
 
 		const auto out_file = this->get_drive_filename(file);
-		if (!utils::io::write_file(out_file, *data, false)) {
+		if (!utils::io::write_file(out_file, *data, false))
+		{
 			throw std::runtime_error("Failed to write: " + file.name);
 		}
 	}
@@ -142,13 +143,13 @@ namespace updater
 		{
 			return;
 		}
-		
+
 		try
 		{
 			this->move_current_process_file();
 			this->update_files({*host_file});
 		}
-		catch(...)
+		catch (...)
 		{
 			this->restore_current_process_file();
 			throw;
@@ -161,7 +162,7 @@ namespace updater
 	void file_updater::update_files(const std::vector<file_info>& outdated_files) const
 	{
 		this->listener_.update_files(outdated_files);
-		
+
 		for (const auto& file : outdated_files)
 		{
 			this->listener_.begin_file(file);
@@ -176,11 +177,13 @@ namespace updater
 	{
 		std::string data{};
 		const auto drive_name = this->get_drive_filename(file);
-		if (!utils::io::read_file(drive_name, &data)) {
+		if (!utils::io::read_file(drive_name, &data))
+		{
 			return true;
 		}
 
-		if (data.size() != file.size) {
+		if (data.size() != file.size)
+		{
 			return true;
 		}
 
@@ -190,7 +193,8 @@ namespace updater
 
 	std::string file_updater::get_drive_filename(const file_info& file) const
 	{
-		if (file.name == UPDATE_HOST_BINARY) {
+		if (file.name == UPDATE_HOST_BINARY)
+		{
 			return this->process_file_;
 		}
 

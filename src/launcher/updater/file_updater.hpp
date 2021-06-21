@@ -18,11 +18,11 @@ namespace updater
 
 	private:
 		progress_listener& listener_;
-		
+
 		std::string base_;
 		std::string process_file_;
 		std::string dead_process_file_;
-		
+
 		void update_file(const file_info& file) const;
 
 		bool is_outdated_file(const file_info& file) const;

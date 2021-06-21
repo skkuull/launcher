@@ -175,6 +175,13 @@ namespace updater
 
 	bool file_updater::is_outdated_file(const file_info& file) const
 	{
+#ifdef DEV_BUILD
+		if (file.name == UPDATE_HOST_BINARY)
+		{
+			return false;
+		}
+#endif
+
 		std::string data{};
 		const auto drive_name = this->get_drive_filename(file);
 		if (!utils::io::read_file(drive_name, &data))

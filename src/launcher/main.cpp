@@ -79,13 +79,17 @@ int CALLBACK WinMain(const HINSTANCE instance, HINSTANCE, LPSTR, int)
 		show_window(lib, path);
 		return 0;
 	}
-	catch (updater::update_canceled&)
+	catch (updater::update_cancelled&)
 	{
 		return 0;
 	}
 	catch (std::exception& e)
 	{
 		MessageBoxA(nullptr, e.what(), "ERROR", MB_ICONERROR);
+	}
+	catch (...)
+	{
+		MessageBoxA(nullptr, "An unknown error occurred", "ERROR", MB_ICONERROR);
 	}
 
 	return 1;

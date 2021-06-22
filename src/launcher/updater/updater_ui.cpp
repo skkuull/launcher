@@ -160,6 +160,11 @@ namespace updater
 			}
 		}
 
+		if (name.empty() && !this->downloaded_files_.empty())
+		{
+			name = this->downloaded_files_.back().name;
+		}
+
 		return name;
 	}
 }

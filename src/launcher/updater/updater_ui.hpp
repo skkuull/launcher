@@ -3,6 +3,8 @@
 #include "progress_ui.hpp"
 #include "progress_listener.hpp"
 
+#include <utils/concurrency.hpp>
+
 namespace updater
 {
 	class updater_ui : public progress_listener
@@ -12,11 +14,10 @@ namespace updater
 		~updater_ui();
 
 	private:
-		size_t total_files_{};
-		size_t downloaded_files_{};
-
-		size_t total_size_{};
-		size_t downloaded_size_{};
+		mutable std::recursive_mutex mutex_;
+		std::vector<file_info> total_files_{};
+		std::vector<file_info> downloaded_files_{};
+		std::unordered_map<std::string, std::pair<size_t, size_t>> downloading_files_{};
 
 		progress_ui progress_ui_{};
 
@@ -29,7 +30,15 @@ namespace updater
 		void file_progress(const file_info& file, size_t progress) override;
 
 		void handle_cancellation() const;
+		void update_progress() const;
+		void update_file_name() const;
 
-		void initialize_sizes(const std::vector<file_info>& files);
+		size_t get_total_size() const;
+		size_t get_downloaded_size() const;
+
+		size_t get_total_files() const;
+		size_t get_downloaded_files() const;
+
+		std::string get_relevant_file_name() const;
 	};
 }

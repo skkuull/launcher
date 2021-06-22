@@ -77,6 +77,13 @@ namespace updater
 
 			return nullptr;
 		}
+
+		size_t get_optimal_concurrent_download_count(const size_t file_count)
+		{
+			size_t cores = std::thread::hardware_concurrency();
+			cores = (cores * 2) / 3;
+			return std::max(1ull, std::min(cores, file_count));
+		}
 	}
 
 	file_updater::file_updater(progress_listener& listener, std::string base, std::string process_file)
@@ -163,12 +170,64 @@ namespace updater
 	{
 		this->listener_.update_files(outdated_files);
 
-		for (const auto& file : outdated_files)
+		const auto thread_count = get_optimal_concurrent_download_count(outdated_files.size());
+
+		std::vector<std::thread> threads{};
+		std::atomic<size_t> current_index{0};
+
+
+		utils::concurrency::container<std::exception_ptr> exception{};
+
+		for (size_t i = 0; i < thread_count; ++i)
 		{
-			this->listener_.begin_file(file);
-			this->update_file(file);
-			this->listener_.end_file(file);
+			threads.emplace_back([&]()
+			{
+				while (!exception.access<bool>([](const std::exception_ptr& ptr)
+				{
+					return static_cast<bool>(ptr);
+				}))
+				{
+					const auto index = current_index++;
+					if (index >= outdated_files.size())
+					{
+						break;
+					}
+
+					try
+					{
+						const auto& file = outdated_files[index];
+						this->listener_.begin_file(file);
+						this->update_file(file);
+						this->listener_.end_file(file);
+					}
+					catch (...)
+					{
+						exception.access([](std::exception_ptr& ptr)
+						{
+							ptr = std::current_exception();
+						});
+
+						return;
+					}
+				}
+			});
 		}
+
+		for (auto& thread : threads)
+		{
+			if (thread.joinable())
+			{
+				thread.join();
+			}
+		}
+
+		exception.access([](const std::exception_ptr& ptr)
+		{
+			if (ptr)
+			{
+				std::rethrow_exception(ptr);
+			}
+		});
 
 		this->listener_.done_update();
 	}

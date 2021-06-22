@@ -16,7 +16,10 @@ namespace updater
 	{
 		this->handle_cancellation();
 
-		this->initialize_sizes(files);
+		std::lock_guard<std::recursive_mutex> _{this->mutex_};
+		this->total_files_ = files;
+		this->downloaded_files_.clear();
+		this->downloading_files_.clear();
 
 		this->progress_ui_ = {};
 		this->progress_ui_.set_title("X Labs Updater");
@@ -25,31 +28,54 @@ namespace updater
 
 	void updater_ui::done_update()
 	{
+		std::lock_guard<std::recursive_mutex> _{this->mutex_};
+
+		this->progress_ui_.set_line(1, "Update successful.");
+		this->progress_ui_.set_line(2, "");
+		this->progress_ui_.set_progress(1, 1);
+
+		this->total_files_.clear();
+		this->downloaded_files_.clear();
+		this->downloading_files_.clear();
 	}
 
 	void updater_ui::begin_file(const file_info& file)
 	{
 		this->handle_cancellation();
 
-		++this->downloaded_files_;
+		std::lock_guard<std::recursive_mutex> _{this->mutex_};
 
-		this->progress_ui_.set_line(1, utils::string::va("Updating files... (%zu/%zu)", this->downloaded_files_,
-		                                                 this->total_files_));
-		this->progress_ui_.set_line(2, file.name);
-		this->progress_ui_.set_progress(downloaded_size_, total_size_);
+		this->file_progress(file, 0);
+		this->update_file_name();
 	}
 
 	void updater_ui::end_file(const file_info& file)
 	{
-		this->downloaded_size_ += file.size;
-		this->progress_ui_.set_progress(this->downloaded_size_, this->total_size_);
+		std::lock_guard<std::recursive_mutex> _{this->mutex_};
+
+		this->downloaded_files_.emplace_back(file);
+		const auto entry = this->downloading_files_.find(file.name);
+		if (entry != this->downloading_files_.end())
+		{
+			this->downloading_files_.erase(entry);
+		}
+		else
+		{
+			assert(false && "Failed to erase file.");
+		}
+
+		this->update_progress();
+		this->update_file_name();
 	}
 
-	void updater_ui::file_progress(const file_info& /*file*/, const size_t progress)
+	void updater_ui::file_progress(const file_info& file, const size_t progress)
 	{
 		this->handle_cancellation();
 
-		this->progress_ui_.set_progress(this->downloaded_size_ + progress, this->total_size_);
+		std::lock_guard<std::recursive_mutex> _{this->mutex_};
+
+		this->downloading_files_[file.name] = {progress, file.size};
+		this->update_progress();
 	}
 
 	void updater_ui::handle_cancellation() const
@@ -60,17 +86,80 @@ namespace updater
 		}
 	}
 
-	void updater_ui::initialize_sizes(const std::vector<file_info>& files)
+	void updater_ui::update_progress() const
 	{
-		this->downloaded_files_ = 0;
-		this->downloaded_size_ = 0;
+		std::lock_guard<std::recursive_mutex> _{this->mutex_};
+		this->progress_ui_.set_progress(this->get_downloaded_size(), this->get_total_size());
+	}
 
-		this->total_files_ = files.size();
-		this->total_size_ = 0;
+	void updater_ui::update_file_name() const
+	{
+		std::lock_guard<std::recursive_mutex> _{this->mutex_};
+		this->progress_ui_.set_line(1, utils::string::va("Updating files... (%zu/%zu)", this->get_downloaded_files(),
+		                                                 this->get_total_files()));
+		this->progress_ui_.set_line(2, this->get_relevant_file_name());
+	}
 
-		for (const auto& info : files)
+	size_t updater_ui::get_total_size() const
+	{
+		std::lock_guard<std::recursive_mutex> _{this->mutex_};
+
+		size_t total_size = 0;
+		for (const auto& file : this->total_files_)
 		{
-			this->total_size_ += info.size;
+			total_size += file.size;
 		}
+
+		return total_size;
+	}
+
+	size_t updater_ui::get_downloaded_size() const
+	{
+		std::lock_guard<std::recursive_mutex> _{this->mutex_};
+
+		size_t downloaded_size = 0;
+		for (const auto& file : this->downloaded_files_)
+		{
+			downloaded_size += file.size;
+		}
+
+		for (const auto& file : this->downloading_files_)
+		{
+			downloaded_size += file.second.first;
+		}
+
+		return downloaded_size;
+	}
+
+	size_t updater_ui::get_total_files() const
+	{
+		std::lock_guard<std::recursive_mutex> _{this->mutex_};
+		return this->total_files_.size();
+	}
+
+	size_t updater_ui::get_downloaded_files() const
+	{
+		std::lock_guard<std::recursive_mutex> _{this->mutex_};
+		return this->downloaded_files_.size();
+	}
+
+	std::string updater_ui::get_relevant_file_name() const
+	{
+		std::lock_guard<std::recursive_mutex> _{this->mutex_};
+
+		std::string name{};
+		auto smallest = std::numeric_limits<size_t>::max();
+
+		for (const auto& file : this->downloading_files_)
+		{
+			const auto max_size = file.second.second;
+			if (max_size < smallest)
+			{
+				smallest = max_size;
+				name = file.first;
+			}
+		}
+
+		return name;
 	}
 }

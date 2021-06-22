@@ -6,10 +6,7 @@
 
 namespace updater
 {
-	updater_ui::updater_ui()
-	{
-	}
-
+	updater_ui::updater_ui() = default;
 	updater_ui::~updater_ui() = default;
 
 	void updater_ui::update_files(const std::vector<file_info>& files)
@@ -30,9 +27,8 @@ namespace updater
 	{
 		std::lock_guard<std::recursive_mutex> _{this->mutex_};
 
-		this->progress_ui_.set_line(1, "Update successful.");
-		this->progress_ui_.set_line(2, "");
 		this->progress_ui_.set_progress(1, 1);
+		this->update_file_name();
 
 		this->total_files_.clear();
 		this->downloaded_files_.clear();
@@ -95,8 +91,20 @@ namespace updater
 	void updater_ui::update_file_name() const
 	{
 		std::lock_guard<std::recursive_mutex> _{this->mutex_};
-		this->progress_ui_.set_line(1, utils::string::va("Updating files... (%zu/%zu)", this->get_downloaded_files(),
-		                                                 this->get_total_files()));
+
+		const auto downloaded_file_count = this->get_downloaded_files();
+		const auto total_file_count = this->get_total_files();
+
+		if (downloaded_file_count == total_file_count)
+		{
+			this->progress_ui_.set_line(1, "Update successful.");
+		}
+		else
+		{
+			this->progress_ui_.set_line(1, utils::string::va("Updating files... (%zu/%zu)", downloaded_file_count,
+			                                                 total_file_count));
+		}
+
 		this->progress_ui_.set_line(2, this->get_relevant_file_name());
 	}
 

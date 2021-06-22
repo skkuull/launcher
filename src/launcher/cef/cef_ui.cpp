@@ -36,6 +36,24 @@ namespace cef
 				throw std::runtime_error("Failed to load CEF");
 			}
 		}
+
+		void scale_dpi(CefWindowInfo& info)
+		{
+			const utils::nt::library user32{"user32.dll"};
+			const auto get_dpi = user32 ? user32.get_proc<UINT(WINAPI *)(HWND)>("GetDpiForWindow") : nullptr;
+			const auto unaware_dpi = 96;
+
+			if (get_dpi)
+			{
+				const auto dpi = get_dpi(GetForegroundWindow());
+
+				info.width *= dpi;
+				info.width /= unaware_dpi;
+
+				info.height *= dpi;
+				info.height /= unaware_dpi;
+			}
+		}
 	}
 
 	void cef_ui::work_once()
@@ -94,6 +112,8 @@ namespace cef
 		window_info.x = (GetSystemMetrics(SM_CXSCREEN) - window_info.width) / 2;
 		window_info.y = (GetSystemMetrics(SM_CYSCREEN) - window_info.height) / 2;
 		window_info.style &= ~(WS_MAXIMIZEBOX | WS_THICKFRAME | WS_VISIBLE);
+
+		scale_dpi(window_info);
 
 		if (!this->ui_handler_)
 		{

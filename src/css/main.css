@@ -147,4 +147,8 @@ img.container {
     #navigation>.separator {
         background: #333;
     }
+
+    #navigation>.element {
+        box-shadow: 0 9px 19px rgba(0, 0, 0, 0.2), 0 15px 12px rgba(0, 0, 0, 0.2);
+    }
 }

@@ -60,6 +60,7 @@ namespace utils::http
 		curl_easy_setopt(curl, CURLOPT_URL, url.data());
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &helper);
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 1);
 		if (curl_easy_perform(curl) == CURLE_OK)
 		{
 			return {std::move(buffer)};

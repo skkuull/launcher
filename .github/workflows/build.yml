@@ -64,6 +64,13 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: 'Block Concurrent Executions'
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 10
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Check out files
         uses: actions/checkout@v2
         with:

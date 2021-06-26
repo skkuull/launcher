@@ -51,3 +51,10 @@ jobs:
           name: ${{matrix.configuration}} debug symbols
           path: |
             build/bin/**/*.pdb
+
+      - name: Upload ${{matrix.configuration}} CEF binaries
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{matrix.configuration}} CEF
+          path: |
+            build/runtime/**/*.*

@@ -19,7 +19,7 @@ jobs:
         with:
           submodules: true
           fetch-depth: 0
-          # NOTE - if LFS ever starts getting used during builds, switch this to true!
+          # NOTE - If LFS ever starts getting used during builds, switch this to true!
           lfs: false
 
       - name: Add msbuild to PATH

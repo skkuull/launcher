@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - master
+    types: [closed, opened, synchronize, reopened]
+
+jobs:
+  build:
+    name: Build binaries
+    runs-on: windows-latest
+    steps:
+      - name: Check out files
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+          fetch-depth: 0
+          # NOTE - if LFS ever starts getting used during builds, switch this to true!
+          lfs: false
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Install 7z
+        uses: edgarrc/action-7z@v1
+
+      - name: Download CEF
+        run: .\get-cef.ps1
+        shell: powershell

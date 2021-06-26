@@ -21,7 +21,7 @@ namespace
 	void show_window(const utils::nt::library& process, const std::string& path)
 	{
 		cef::cef_ui cef_ui{process, path};
-		cef_ui.create(path + "launcher-ui", "main.html");
+		cef_ui.create(path + "data/launcher-ui", "main.html");
 		cef_ui.work();
 	}
 
@@ -63,7 +63,7 @@ namespace
 	void run_as_singleton()
 	{
 		static named_mutex mutex{"xlabs-launcher"};
-		if (!mutex.try_lock())
+		if (!mutex.try_lock(1s))
 		{
 			throw std::runtime_error{"X Labs launcher is already running"};
 		}

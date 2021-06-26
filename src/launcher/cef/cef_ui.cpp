@@ -8,7 +8,7 @@
 #include <utils/nt.hpp>
 #include <utils/string.hpp>
 
-#define CEF_PATH "cef/" CONFIG_NAME
+#define CEF_PATH "data/cef/" CONFIG_NAME
 
 namespace cef
 {
@@ -94,9 +94,9 @@ namespace cef
 		CefString(&settings.browser_subprocess_path) = this->process_.get_path();
 		CefString(&settings.locales_dir_path) = this->path_ + (CEF_PATH "/locales");
 		CefString(&settings.resources_dir_path) = this->path_ + CEF_PATH;
-		CefString(&settings.log_file) = this->path_ + "cef-data/debug.log";
-		CefString(&settings.user_data_path) = this->path_ + "cef-data/user";
-		CefString(&settings.cache_path) = this->path_ + "cef-data/cache";
+		CefString(&settings.log_file) = this->path_ + "user/cef-data/debug.log";
+		CefString(&settings.user_data_path) = this->path_ + "user/cef-data/user";
+		CefString(&settings.cache_path) = this->path_ + "user/cef-data/cache";
 		CefString(&settings.locale) = "en-US";
 
 		this->initialized_ = CefInitialize(args, settings, new cef_ui_app(), nullptr);

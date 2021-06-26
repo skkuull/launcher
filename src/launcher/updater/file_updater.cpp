@@ -5,6 +5,7 @@
 #include "file_updater.hpp"
 
 #include <utils/cryptography.hpp>
+#include <utils/string.hpp>
 #include <utils/http.hpp>
 #include <utils/io.hpp>
 
@@ -84,6 +85,14 @@ namespace updater
 			cores = (cores * 2) / 3;
 			return std::max(1ull, std::min(cores, file_count));
 		}
+
+		bool is_inside_folder(const std::filesystem::path& file, const std::filesystem::path& folder)
+		{
+			const auto relative = std::filesystem::relative(file, folder);
+			const auto start = relative.begin();
+			const auto end = relative.end();
+			return  start != end && start->string() != "..";
+		}
 	}
 
 	file_updater::file_updater(progress_listener& listener, std::string base, std::string process_file)
@@ -98,6 +107,11 @@ namespace updater
 	void file_updater::run() const
 	{
 		const auto files = get_file_infos();
+		if(!files.empty())
+		{
+			this->cleanup_directories(files);
+		}
+		
 		const auto outdated_files = this->get_outdated_files(files);
 		if (outdated_files.empty())
 		{
@@ -264,7 +278,7 @@ namespace updater
 			return this->process_file_;
 		}
 
-		return this->base_ + file.name;
+		return this->base_+ "data/" + file.name;
 	}
 
 	void file_updater::move_current_process_file() const
@@ -289,6 +303,73 @@ namespace updater
 			}
 
 			std::this_thread::sleep_for(2s);
+		}
+	}
+
+	void file_updater::cleanup_directories(const std::vector<file_info>& files) const
+	{
+		this->cleanup_root_directory();
+		this->cleanup_data_directory(files);
+	}
+
+	void file_updater::cleanup_root_directory() const
+	{
+		const auto existing_files = utils::io::list_files(this->base_);
+		for(const auto& file : existing_files)
+		{
+			const auto entry = std::filesystem::relative(file, this->base_);
+			if((entry.string() == "user" || entry.string() == "data") && utils::io::directory_exists(file)) {
+				continue;
+			}
+
+			std::error_code code{};
+			std::filesystem::remove_all(file, code);
+		}
+	}
+
+	void file_updater::cleanup_data_directory(const std::vector<file_info>& files) const
+	{
+		const auto base = std::filesystem::path(this->base_) / "data";
+		if(!utils::io::directory_exists(base.string()))
+		{
+			return;
+		}
+
+		std::vector<std::filesystem::path> legal_files{};
+		legal_files.reserve(files.size());
+		for(const auto& file : files)
+		{
+			legal_files.emplace_back(std::filesystem::absolute(base / file.name));
+		}
+
+		const auto existing_files = utils::io::list_files(base.string(), true);
+		for (auto& file : existing_files)
+		{
+			const auto is_file = std::filesystem::is_regular_file(file);
+			const auto is_folder = std::filesystem::is_directory(file);
+			
+			if(is_file || is_folder)
+			{
+				bool is_legal = false;
+
+				for(const auto& legal_file : legal_files)
+				{
+					if((is_folder && is_inside_folder(legal_file, file)) ||
+						(is_file && legal_file == file))
+					{
+						is_legal = true;
+						break;
+					}
+				}
+
+				if(is_legal)
+				{
+					continue;
+				}
+			}
+			
+			std::error_code code{};
+			std::filesystem::remove_all(file, code);
 		}
 	}
 }

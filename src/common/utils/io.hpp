@@ -16,6 +16,6 @@ namespace utils::io
 	bool create_directory(const std::string& directory);
 	bool directory_exists(const std::string& directory);
 	bool directory_is_empty(const std::string& directory);
-	std::vector<std::string> list_files(const std::string& directory);
+	std::vector<std::string> list_files(const std::string& directory, bool recursive = false);
 	void copy_folder(const std::filesystem::path& src, const std::filesystem::path& target);
 }

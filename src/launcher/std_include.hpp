@@ -19,6 +19,7 @@
 #include <regex>
 #include <atomic>
 #include <set>
+#include <unordered_set>
 
 #include <optional>
 

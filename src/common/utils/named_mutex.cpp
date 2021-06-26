@@ -22,11 +22,11 @@ void named_mutex::lock() const
 	}
 }
 
-bool named_mutex::try_lock() const
+bool named_mutex::try_lock(const std::chrono::milliseconds timeout) const
 {
 	if (this->handle_)
 	{
-		return WAIT_OBJECT_0 == WaitForSingleObject(this->handle_, 0);
+		return WAIT_OBJECT_0 == WaitForSingleObject(this->handle_, static_cast<DWORD>(timeout.count()));
 	}
 
 	return false;

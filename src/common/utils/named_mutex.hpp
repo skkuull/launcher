@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <chrono>
 
 class named_mutex
 {
@@ -14,7 +15,7 @@ public:
 	named_mutex& operator=(const named_mutex&) = delete;
 
 	void lock() const;
-	bool try_lock() const;
+	bool try_lock(std::chrono::milliseconds timeout = std::chrono::milliseconds{0}) const;
 	void unlock() const noexcept;
 
 private:

@@ -31,5 +31,9 @@ namespace updater
 		void move_current_process_file() const;
 		void restore_current_process_file() const;
 		void delete_old_process_file() const;
+
+		void cleanup_directories(const std::vector<file_info>& files) const;
+		void cleanup_root_directory() const;
+		void cleanup_data_directory(const std::vector<file_info>& files) const;
 	};
 }

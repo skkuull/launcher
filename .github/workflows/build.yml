@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploy artifacts
     steps:
-      - name: 'Wait for previous workflows'
+      - name: Wait for previous workflows
         uses: softprops/turnstyle@v1
         with:
           poll-interval-seconds: 10

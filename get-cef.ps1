@@ -10,7 +10,7 @@ $cefURLVersion = [System.Web.HttpUtility]::UrlEncode($cefVersion)
 $source = "https://cef-builds.spotifycdn.com/$cefURLVersion.tar.bz2"
 $destinationPart = 'cef.tar'
 $destination = "$destinationPart.bz2"
-Invoke-WebRequest -Uri $source -OutFile $destination
+(New-Object Net.WebClient).DownloadFile($source, $destination)
 
 $sz = '"C:\Program Files\7-Zip\7z.exe"'
 

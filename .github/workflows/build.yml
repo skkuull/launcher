@@ -58,3 +58,44 @@ jobs:
           name: ${{matrix.configuration}} CEF
           path: |
             build/runtime/**/*.*
+
+  upload:
+    name: Upload artifacts
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out files
+        uses: actions/checkout@v2
+        with:
+          submodules: false
+          lfs: false
+
+      - name: Download Release binaries
+        uses: actions/download-artifact@v2
+        with:
+          name: Release binaries
+
+      - name: Download Release CEF binaries
+        uses: actions/download-artifact@v2
+        with:
+          name: Release CEF
+
+  notify:
+    name: Notify Discord
+    runs-on: ubuntu-latest
+    if: |
+      github.repository_owner == 'XLabsProject' && (
+        (
+          github.event.pull_request.merged
+        ) || (
+          github.event.push.ref == 'refs/heads/master' ||
+          github.event.push.ref == 'refs/heads/develop'
+        )
+      )
+    steps:
+      - name: Post CI status notification to Discord
+        uses: sarisia/actions-status-discord@v1.7.1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_CI_BOT_WEBHOOK }}
+          title: "Build"

@@ -253,7 +253,7 @@ configuration "windows"
 defines {"_WINDOWS", "WIN32"}
 
 configuration "Release"
-optimize "Size"
+optimize "Full"
 buildoptions {"/GL"}
 linkoptions { "/IGNORE:4702", "/LTCG" }
 

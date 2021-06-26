@@ -90,8 +90,7 @@ namespace updater
 		{
 			const auto relative = std::filesystem::relative(file, folder);
 			const auto start = relative.begin();
-			const auto end = relative.end();
-			return  start != end && start->string() != "..";
+			return  start != relative.end() && start->string() != "..";
 		}
 	}
 
@@ -107,17 +106,13 @@ namespace updater
 	void file_updater::run() const
 	{
 		const auto files = get_file_infos();
-		if(!files.empty())
-		{
-			this->cleanup_directories(files);
-		}
-		
 		const auto outdated_files = this->get_outdated_files(files);
 		if (outdated_files.empty())
 		{
 			return;
 		}
 
+		this->cleanup_directories(files);
 		this->update_host_binary(outdated_files);
 		this->update_files(outdated_files);
 	}
@@ -339,7 +334,10 @@ namespace updater
 		legal_files.reserve(files.size());
 		for(const auto& file : files)
 		{
-			legal_files.emplace_back(std::filesystem::absolute(base / file.name));
+			if (file.name != UPDATE_HOST_BINARY)
+			{
+				legal_files.emplace_back(std::filesystem::absolute(base / file.name));
+			}
 		}
 
 		const auto existing_files = utils::io::list_files(base.string(), true);

@@ -106,13 +106,17 @@ namespace updater
 	void file_updater::run() const
 	{
 		const auto files = get_file_infos();
+		if (!files.empty())
+		{
+			this->cleanup_directories(files);
+		}
+
 		const auto outdated_files = this->get_outdated_files(files);
 		if (outdated_files.empty())
 		{
 			return;
 		}
 
-		this->cleanup_directories(files);
 		this->update_host_binary(outdated_files);
 		this->update_files(outdated_files);
 	}

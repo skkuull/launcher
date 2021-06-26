@@ -104,6 +104,6 @@ jobs:
 
       - name: Deploy Launcher
         run: rsync -avz xlabs.exe ${{ secrets.MASTER_USER }}@${{ secrets.MASTER_ADDRESS }}:/var/www/master.xlabs.dev/data/
-
+        
       - name: Trigger cache regeneration
         run: ssh ${{ secrets.MASTER_USER }}@${{ secrets.MASTER_ADDRESS }} node /home/dpmaster/gen.js

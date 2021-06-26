@@ -5,7 +5,6 @@
 #include "file_updater.hpp"
 
 #include <utils/cryptography.hpp>
-#include <utils/string.hpp>
 #include <utils/http.hpp>
 #include <utils/io.hpp>
 
@@ -90,7 +89,7 @@ namespace updater
 		{
 			const auto relative = std::filesystem::relative(file, folder);
 			const auto start = relative.begin();
-			return  start != relative.end() && start->string() != "..";
+			return start != relative.end() && start->string() != "..";
 		}
 	}
 
@@ -277,7 +276,7 @@ namespace updater
 			return this->process_file_;
 		}
 
-		return this->base_+ "data/" + file.name;
+		return this->base_ + "data/" + file.name;
 	}
 
 	void file_updater::move_current_process_file() const
@@ -307,6 +306,11 @@ namespace updater
 
 	void file_updater::cleanup_directories(const std::vector<file_info>& files) const
 	{
+		if (!utils::io::directory_exists(this->base_))
+		{
+			return;
+		}
+
 		this->cleanup_root_directory();
 		this->cleanup_data_directory(files);
 	}
@@ -317,7 +321,7 @@ namespace updater
 		for(const auto& file : existing_files)
 		{
 			const auto entry = std::filesystem::relative(file, this->base_);
-			if((entry.string() == "user" || entry.string() == "data") && utils::io::directory_exists(file)) {
+			if ((entry.string() == "user" || entry.string() == "data") && utils::io::directory_exists(file))
 				continue;
 			}
 
@@ -329,7 +333,7 @@ namespace updater
 	void file_updater::cleanup_data_directory(const std::vector<file_info>& files) const
 	{
 		const auto base = std::filesystem::path(this->base_) / "data";
-		if(!utils::io::directory_exists(base.string()))
+		if (!utils::io::directory_exists(base.string()))
 		{
 			return;
 		}
@@ -349,14 +353,14 @@ namespace updater
 		{
 			const auto is_file = std::filesystem::is_regular_file(file);
 			const auto is_folder = std::filesystem::is_directory(file);
-			
-			if(is_file || is_folder)
+
+			if (is_file || is_folder)
 			{
 				bool is_legal = false;
 
-				for(const auto& legal_file : legal_files)
+				for (const auto &legal_file : legal_files)
 				{
-					if((is_folder && is_inside_folder(legal_file, file)) ||
+					if ((is_folder && is_inside_folder(legal_file, file)) ||
 						(is_file && legal_file == file))
 					{
 						is_legal = true;
@@ -364,12 +368,12 @@ namespace updater
 					}
 				}
 
-				if(is_legal)
+				if (is_legal)
 				{
 					continue;
 				}
 			}
-			
+
 			std::error_code code{};
 			std::filesystem::remove_all(file, code);
 		}

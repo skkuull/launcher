@@ -64,7 +64,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: 'Block Concurrent Executions'
+      - name: 'Wait for previous workflows'
         uses: softprops/turnstyle@v1
         with:
           poll-interval-seconds: 10

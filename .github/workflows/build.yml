@@ -57,7 +57,7 @@ jobs:
         with:
           name: ${{matrix.configuration}} CEF
           path: |
-            build/runtime/**/*.*
+            build/runtime/x64/${{matrix.configuration}}/*
 
   upload:
     name: Upload artifacts
@@ -89,10 +89,13 @@ jobs:
       - name: Adding Known Hosts
         run: ssh-keyscan -H ${{ secrets.MASTER_ADDRESS }} >> ~/.ssh/known_hosts
 
-      #- name: Remove old files on master
-      #  run: ssh ${{ secrets.MASTER_USER }}@${{ secrets.MASTER_ADDRESS }} rm -rf /var/www/master.xlabs.dev/data/launcher-ui/*
+      - name: Remove old files on master
+        run: ssh ${{ secrets.MASTER_USER }}@${{ secrets.MASTER_ADDRESS }} rm -rf /var/www/master.xlabs.dev/data/cef/release/*
 
-      - name: Deploy with rsync
+      - name: Deploy CEF
+        run: rsync -avz ./cef/ ${{ secrets.MASTER_USER }}@${{ secrets.MASTER_ADDRESS }}:/var/www/master.xlabs.dev/data/cef/release/
+
+      - name: Deploy Launcher
         run: rsync -avz xlabs.exe ${{ secrets.MASTER_USER }}@${{ secrets.MASTER_ADDRESS }}:/var/www/master.xlabs.dev/data/
 
       - name: Trigger cache regeneration

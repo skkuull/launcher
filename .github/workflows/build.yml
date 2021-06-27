@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - "*"
+  pull_request:
+    branches:
+      - "*"
+    types: [closed, opened, synchronize, reopened]
 jobs:
   build:
     name: Build binaries
@@ -63,6 +67,7 @@ jobs:
     name: Deploy artifacts
     needs: build
     runs-on: ubuntu-latest
+    if: github.event_name == 'push'
     steps:
       - name: Wait for previous workflows
         uses: softprops/turnstyle@v1

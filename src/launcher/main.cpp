@@ -18,9 +18,17 @@ namespace
 		return cef_ui.run_process();
 	}
 
+	void add_commands(cef::cef_ui& cef_ui)
+	{
+		cef_ui.add_command("test", [](const rapidjson::Value& /*value*/, rapidjson::Document& /*response*/)
+		{
+		});
+	}
+
 	void show_window(const utils::nt::library& process, const std::string& path)
 	{
 		cef::cef_ui cef_ui{process, path};
+		add_commands(cef_ui);
 		cef_ui.create(path + "data/launcher-ui", "main.html");
 		cef_ui.work();
 	}

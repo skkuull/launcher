@@ -66,6 +66,11 @@ namespace cef
 		CefRunMessageLoop();
 	}
 
+	void cef_ui::add_command(std::string command, command_handler handler)
+	{
+		this->command_handlers_[std::move(command)] = std::move(handler);
+	}
+
 	int cef_ui::run_process() const
 	{
 		const CefMainArgs args(this->process_.get_handle());
@@ -100,7 +105,7 @@ namespace cef
 		CefString(&settings.locale) = "en-US";
 
 		this->initialized_ = CefInitialize(args, settings, new cef_ui_app(), nullptr);
-		CefRegisterSchemeHandlerFactory("http", "xlabs", new cef_ui_scheme_handler_factory(folder));
+		CefRegisterSchemeHandlerFactory("http", "xlabs", new cef_ui_scheme_handler_factory(folder, this->command_handlers_));
 
 		CefBrowserSettings browser_settings;
 		//browser_settings.windowless_frame_rate = 60;

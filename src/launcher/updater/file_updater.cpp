@@ -95,8 +95,8 @@ namespace updater
 
 	file_updater::file_updater(progress_listener& listener, std::string base, std::string process_file)
 		: listener_(listener)
-		, base_(std::move(base))
-		, process_file_(std::move(process_file))
+		  , base_(std::move(base))
+		  , process_file_(std::move(process_file))
 	{
 		this->dead_process_file_ = this->process_file_ + ".old";
 		this->delete_old_process_file();
@@ -124,9 +124,9 @@ namespace updater
 	{
 		const auto url = UPDATE_FOLDER + file.name;
 		const auto data = utils::http::get_data(url, {}, [&](const size_t progress)
-			{
-				this->listener_.file_progress(file, progress);
-			});
+		{
+			this->listener_.file_progress(file, progress);
+		});
 
 		if (!data || data->size() != file.size || get_hash(*data) != file.hash)
 		{
@@ -166,7 +166,7 @@ namespace updater
 		try
 		{
 			this->move_current_process_file();
-			this->update_files({ *host_file });
+			this->update_files({*host_file});
 		}
 		catch (...)
 		{
@@ -185,7 +185,7 @@ namespace updater
 		const auto thread_count = get_optimal_concurrent_download_count(outdated_files.size());
 
 		std::vector<std::thread> threads{};
-		std::atomic<size_t> current_index{ 0 };
+		std::atomic<size_t> current_index{0};
 
 
 		utils::concurrency::container<std::exception_ptr> exception{};
@@ -193,36 +193,36 @@ namespace updater
 		for (size_t i = 0; i < thread_count; ++i)
 		{
 			threads.emplace_back([&]()
+			{
+				while (!exception.access<bool>([](const std::exception_ptr& ptr)
 				{
-					while (!exception.access<bool>([](const std::exception_ptr& ptr)
-						{
-							return static_cast<bool>(ptr);
-						}))
+					return static_cast<bool>(ptr);
+				}))
+				{
+					const auto index = current_index++;
+					if (index >= outdated_files.size())
 					{
-						const auto index = current_index++;
-						if (index >= outdated_files.size())
-						{
-							break;
-						}
-
-						try
-						{
-							const auto& file = outdated_files[index];
-							this->listener_.begin_file(file);
-							this->update_file(file);
-							this->listener_.end_file(file);
-						}
-						catch (...)
-						{
-							exception.access([](std::exception_ptr& ptr)
-								{
-									ptr = std::current_exception();
-								});
-
-							return;
-						}
+						break;
 					}
-				});
+
+					try
+					{
+						const auto& file = outdated_files[index];
+						this->listener_.begin_file(file);
+						this->update_file(file);
+						this->listener_.end_file(file);
+					}
+					catch (...)
+					{
+						exception.access([](std::exception_ptr& ptr)
+						{
+							ptr = std::current_exception();
+						});
+
+						return;
+					}
+				}
+			});
 		}
 
 		for (auto& thread : threads)
@@ -234,12 +234,12 @@ namespace updater
 		}
 
 		exception.access([](const std::exception_ptr& ptr)
+		{
+			if (ptr)
 			{
-				if (ptr)
-				{
-					std::rethrow_exception(ptr);
-				}
-			});
+				std::rethrow_exception(ptr);
+			}
+		});
 
 		this->listener_.done_update();
 	}

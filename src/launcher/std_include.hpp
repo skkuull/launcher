@@ -26,6 +26,8 @@
 #include <gsl/gsl>
 
 #include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
 
 #pragma warning(push)
 #pragma warning(disable: 4100)

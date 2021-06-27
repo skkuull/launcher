@@ -8,6 +8,9 @@ namespace cef
 	class cef_ui
 	{
 	public:
+		using command_handler = std::function<void(const rapidjson::Value& request, rapidjson::Document& response)>;
+		using command_handlers = std::unordered_map<std::string, command_handler>;
+
 		cef_ui(utils::nt::library process, std::string path);
 		~cef_ui();
 
@@ -21,9 +24,12 @@ namespace cef
 		void work_once();
 		void work();
 
+		void add_command(std::string command, command_handler handler);
+
 	private:
 		utils::nt::library process_;
 		bool initialized_ = false;
+		command_handlers command_handlers_;
 
 		std::string path_;
 		CefRefPtr<CefBrowser> browser_;

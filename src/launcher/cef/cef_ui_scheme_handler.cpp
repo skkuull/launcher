@@ -372,7 +372,7 @@ namespace cef
 				extension.erase(extension.begin());
 			}
 
-			auto& mime_type_map = get_mime_type_map();
+			const auto& mime_type_map = get_mime_type_map();
 			const auto entry = mime_type_map.find(extension);
 			if (entry != mime_type_map.end())
 			{
@@ -384,8 +384,10 @@ namespace cef
 		}
 	}
 
-	cef_ui_scheme_handler_factory::cef_ui_scheme_handler_factory(std::string folder)
+	cef_ui_scheme_handler_factory::cef_ui_scheme_handler_factory(std::string folder,
+	                                                             const command_handlers& command_handlers)
 		: folder_(std::move(folder))
+		  , command_handlers_(command_handlers)
 	{
 	}
 
@@ -399,11 +401,66 @@ namespace cef
 		CefURLParts url_parts{};
 		CefParseURL(request->GetURL(), url_parts);
 
-		const auto file = this->folder_ + CefString(&url_parts.path).ToString();
+		const auto path = CefString(&url_parts.path).ToString();
+		auto* const result = this->handle_command(request, path);
+		if (result)
+		{
+			return result;
+		}
+
+		const auto file = this->folder_ + path;
 		auto content = utils::io::read_file(file);
-		auto& mime_type = get_mime_type(file);
+		const auto& mime_type = get_mime_type(file);
 
 		const auto stream = CefStreamReader::CreateForData(content.data(), content.size());
 		return new CefStreamResourceHandler(mime_type, stream);
+	}
+
+	CefResourceHandler* cef_ui_scheme_handler_factory::handle_command(const CefRefPtr<CefRequest>& request,
+	                                                                  const std::string& path)
+	{
+		if (path != "/command")
+		{
+			return nullptr;
+		}
+
+		CefPostData::ElementVector vector{};
+		request->GetPostData()->GetElements(vector);
+
+		assert(vector.size() == 1);
+		const auto& element = vector.front();
+
+		std::string json{};
+		json.resize(element->GetBytesCount());
+		element->GetBytes(json.size(), json.data());
+
+		rapidjson::Document doc{};
+		doc.Parse(json.data(), json.size());
+
+		const auto& command = doc["command"];
+		const auto& data = doc["data"];
+
+		rapidjson::Document response{};
+		response.SetObject();
+
+		if(command.IsString())
+		{
+			std::string command_name{command.GetString(), command.GetStringLength()};
+			auto handler = this->command_handlers_.find(command_name);
+			if(handler != this->command_handlers_.end())
+			{
+				handler->second(data, response);
+			}
+		}
+
+		rapidjson::StringBuffer buffer{};
+		rapidjson::Writer<rapidjson::StringBuffer, rapidjson::Document::EncodingType, rapidjson::ASCII<>>
+			writer(buffer);
+		doc.Accept(writer);
+
+		json.assign(buffer.GetString(), buffer.GetLength());
+
+		const auto stream = CefStreamReader::CreateForData(json.data(), json.size());
+		return new CefStreamResourceHandler("application/json", stream);
 	}
 }

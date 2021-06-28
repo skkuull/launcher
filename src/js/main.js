@@ -8,6 +8,8 @@ function initialize() {
     document.querySelector("#close-button").onclick = () => {
         window.executeCommand("close");
     };
+
+    window.executeCommand("show");
 }
 
 function initializeNavigation() {

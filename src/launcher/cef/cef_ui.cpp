@@ -117,7 +117,7 @@ namespace cef
 		window_info.height = 500; //GetSystemMetrics(SM_CYVIRTUALSCREEN);
 		window_info.x = (GetSystemMetrics(SM_CXSCREEN) - window_info.width) / 2;
 		window_info.y = (GetSystemMetrics(SM_CYSCREEN) - window_info.height) / 2;
-		window_info.style &= ~(WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_THICKFRAME | WS_TILEDWINDOW);
+		window_info.style &= ~(WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_THICKFRAME | WS_TILEDWINDOW | WS_VISIBLE);
 		window_info.style |= WS_POPUP;
 		window_info.ex_style |= WS_EX_LAYERED;
 

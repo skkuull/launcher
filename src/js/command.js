@@ -2,7 +2,7 @@ window.executeCommand = function (command, data) {
 
     var object = {
         command: command,
-        data: JSON.stringify(data || {}),
+        data: data || {},
     }
 
     return fetch("/command", {

@@ -8,6 +8,11 @@ body {
     user-select: none;
 }
 
+body {
+    display: flex;
+    flex-flow: column;
+}
+
 img {
     -webkit-user-drag: none;
 }
@@ -63,6 +68,7 @@ img.container {
 }
 
 #container {
+    flex: 1 1 auto;
     display: flex;
     width: 100%;
     height: 100%;
@@ -119,6 +125,31 @@ img.container {
     padding: 15px;
 }
 
+#controls {
+    background: white;
+    flex: 0 1 auto;
+    -webkit-app-region: drag;
+    padding: 5px;
+    text-align: right;
+}
+
+#controls>span{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    float: right;
+    margin: 5px;
+}
+
+#minimize-button {
+    background: rgb(255, 217, 0);
+
+}
+
+#close-button {
+    background: rgb(255, 61, 61);
+}
+
 @media (prefers-color-scheme: dark) {
 
     html,
@@ -150,5 +181,9 @@ img.container {
 
     #navigation>.element {
         box-shadow: 0 9px 19px rgba(0, 0, 0, 0.2), 0 15px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    #controls {
+        background: #222;
     }
 }

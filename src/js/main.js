@@ -1,5 +1,13 @@
 function initialize() {
     initializeNavigation();
+
+    document.querySelector("#minimize-button").onclick = () => {
+        window.executeCommand("minimize");
+    };
+
+    document.querySelector("#close-button").onclick = () => {
+        window.executeCommand("close");
+    };
 }
 
 function initializeNavigation() {

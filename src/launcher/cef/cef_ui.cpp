@@ -144,7 +144,10 @@ namespace cef
 		SendMessageA(window, WM_SETICON, ICON_SMALL, icon);
 		SendMessageA(window, WM_SETICON, ICON_BIG, icon);
 
-		SetWindowRgn(this->get_window(), CreateRoundRectRgn(0, 0, window_info.width, window_info.height, 15, 15), TRUE);
+		SetWindowRgn(window, CreateRoundRectRgn(0, 0, window_info.width, window_info.height, 15, 15), TRUE);
+
+		const auto class_style = GetClassLongPtrA(window, GCL_STYLE);
+		SetClassLongPtrA(window, GCL_STYLE, class_style | CS_DROPSHADOW);
 	}
 
 	HWND cef_ui::get_window() const

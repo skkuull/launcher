@@ -132,12 +132,10 @@ namespace cef
 		this->browser_ = CefBrowserHost::CreateBrowserSync(window_info, this->ui_handler_, url, browser_settings,
 		                                                   nullptr, nullptr);
 
-		this->set_window_icon();
-
-		SetWindowRgn(this->get_window(), CreateRoundRectRgn(0, 0, window_info.width, window_info.height, 15, 15), TRUE);
+		this->set_window_style(window_info);
 	}
 
-	void cef_ui::set_window_icon() const
+	void cef_ui::set_window_style(const CefWindowInfo& window_info) const
 	{
 		auto* const window = this->get_window();
 		if (!window) return;
@@ -145,6 +143,8 @@ namespace cef
 		const auto icon = LPARAM(LoadIconA(this->process_.get_handle(), MAKEINTRESOURCEA(IDI_ICON_1)));
 		SendMessageA(window, WM_SETICON, ICON_SMALL, icon);
 		SendMessageA(window, WM_SETICON, ICON_BIG, icon);
+
+		SetWindowRgn(this->get_window(), CreateRoundRectRgn(0, 0, window_info.width, window_info.height, 15, 15), TRUE);
 	}
 
 	HWND cef_ui::get_window() const

@@ -35,7 +35,7 @@ namespace cef
 		CefRefPtr<CefBrowser> browser_;
 		CefRefPtr<cef_ui_handler> ui_handler_;
 
-		void set_window_icon() const;
+		void set_window_style(const CefWindowInfo& window_info) const;
 
 		static void invoke_close_browser(CefRefPtr<CefBrowser> browser);
 	};

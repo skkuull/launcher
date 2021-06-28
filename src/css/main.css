@@ -128,22 +128,32 @@ img.container {
 #controls {
     background: white;
     flex: 0 1 auto;
+    -webkit-user-select: none;
     -webkit-app-region: drag;
+    -moz-user-select: none;
+    user-select: none;
     padding: 5px;
     text-align: right;
+    border-bottom: 1px solid #F5F6FF;
 }
 
-#controls>span{
-    width: 10px;
-    height: 10px;
+#controls>span {
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     float: right;
-    margin: 5px;
+    border: 5px solid white;
+    -webkit-app-region: no-drag;
+    opacity: 0.6;
+    transition: opacity 0.1s linear;
+}
+
+#controls>span:hover {
+    opacity: 1;
 }
 
 #minimize-button {
     background: rgb(255, 217, 0);
-
 }
 
 #close-button {
@@ -185,5 +195,10 @@ img.container {
 
     #controls {
         background: #222;
+        border-bottom: 1px solid #333;
+    }
+
+    #controls>span {
+        border: 5px solid #222;
     }
 }

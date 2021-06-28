@@ -1,5 +1,39 @@
+window.addEventListener("load", initialize);
+
+function sleep(milliseconds) {
+    return new Promise(resolve => {
+        setTimeout(resolve, milliseconds);
+    });
+}
+
+function makeSleep(milliseconds) {
+    return () => sleep(milliseconds);
+}
+
+function waitForAllImages() {
+    return new Promise(resolve => {
+        function waitForAllImagesInternal() {
+            const images = document.querySelectorAll('img');
+
+            for (var i = 0; i < images.length; ++i) {
+                if (!images[i].complete) {
+                    window.requestAnimationFrame(waitForAllImagesInternal);
+                    return;
+                }
+            }
+
+            resolve();
+        }
+
+        waitForAllImagesInternal();
+    });
+}
+
 function initialize() {
-    initializeNavigation();
+    initializeNavigation() //
+        .then(() => waitForAllImages()) //
+        .then(makeSleep(300))
+        .then(() => window.executeCommand("show"));
 
     document.querySelector("#minimize-button").onclick = () => {
         window.executeCommand("minimize");
@@ -8,8 +42,6 @@ function initialize() {
     document.querySelector("#close-button").onclick = () => {
         window.executeCommand("close");
     };
-
-    window.executeCommand("show");
 }
 
 function initializeNavigation() {
@@ -18,7 +50,7 @@ function initializeNavigation() {
         e.addEventListener("click", handleNavigationClick);
     });
 
-    loadInitialPage();
+    return loadInitialPage();
 }
 
 function removeActiveElement() {
@@ -41,16 +73,14 @@ function handleNavigationClick(e) {
 
 function loadInitialPage() {
     const el = document.querySelector("#navigation>.element.active");
-    loadNavigationPage(el.id);
+    return loadNavigationPage(el.id);
 }
 
 function loadNavigationPage(page) {
     var content = document.querySelector("#content");
-    fetch(`./pages/${page}.html`).then(data => {
+    return fetch(`./pages/${page}.html`).then(data => {
         return data.text()
     }).then(text => {
         content.innerHTML = text;
     });
 }
-
-window.addEventListener("load", initialize);

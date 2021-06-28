@@ -63,26 +63,27 @@ jobs:
           path: |
             build/runtime/x64/${{matrix.configuration}}/*
 
-  test:
-    name: Test binaries
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download Release binaries
-        uses: actions/download-artifact@v2
-        with:
-          name: Release binaries
-
-      - name: Perform VirusTotal Scan
-        uses: crazy-max/ghaction-virustotal@v2
-        with:
-          vt_api_key: ${{ secrets.VIRUS_TOTAL_API_KEY }}
-          files: |
-            xlabs.exe
+#  test:
+#    name: Test binaries
+#    needs: build
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Download Release binaries
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: Release binaries
+#
+#      - name: Perform VirusTotal Scan
+#        uses: crazy-max/ghaction-virustotal@v2
+#        with:
+#          vt_api_key: ${{ secrets.VIRUS_TOTAL_API_KEY }}
+#          files: |
+#            xlabs.exe
 
   deploy:
     name: Deploy artifacts
-    needs: test
+#    needs: test
+    needs: build
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:

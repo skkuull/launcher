@@ -105,7 +105,8 @@ namespace cef
 		CefString(&settings.locale) = "en-US";
 
 		this->initialized_ = CefInitialize(args, settings, new cef_ui_app(), nullptr);
-		CefRegisterSchemeHandlerFactory("http", "xlabs", new cef_ui_scheme_handler_factory(folder, this->command_handlers_));
+		CefRegisterSchemeHandlerFactory("http", "xlabs",
+		                                new cef_ui_scheme_handler_factory(folder, this->command_handlers_));
 
 		CefBrowserSettings browser_settings;
 		//browser_settings.windowless_frame_rate = 60;
@@ -116,7 +117,9 @@ namespace cef
 		window_info.height = 500; //GetSystemMetrics(SM_CYVIRTUALSCREEN);
 		window_info.x = (GetSystemMetrics(SM_CXSCREEN) - window_info.width) / 2;
 		window_info.y = (GetSystemMetrics(SM_CYSCREEN) - window_info.height) / 2;
-		window_info.style &= ~(WS_MAXIMIZEBOX | WS_THICKFRAME | WS_VISIBLE);
+		window_info.style &= ~(WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_THICKFRAME | WS_TILEDWINDOW);
+		window_info.style |= WS_POPUP;
+		window_info.ex_style |= WS_EX_LAYERED;
 
 		scale_dpi(window_info);
 
@@ -131,12 +134,7 @@ namespace cef
 
 		this->set_window_icon();
 
-		auto window = this->get_window();
-		std::thread([window]()
-		{
-			std::this_thread::sleep_for(1000ms);
-			ShowWindow(window, SW_SHOWDEFAULT);
-		}).detach();
+		SetWindowRgn(this->get_window(), CreateRoundRectRgn(0, 0, window_info.width, window_info.height, 15, 15), TRUE);
 	}
 
 	void cef_ui::set_window_icon() const

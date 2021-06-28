@@ -20,8 +20,19 @@ namespace
 
 	void add_commands(cef::cef_ui& cef_ui)
 	{
+		cef_ui.add_command("close", [&cef_ui](const auto&, auto&)
+		{
+			cef_ui.close_browser();
+		});
+
+		cef_ui.add_command("minimize", [&cef_ui](const auto&, auto&)
+		{
+			ShowWindow(cef_ui.get_window(), SW_MINIMIZE);
+		});
+
 		cef_ui.add_command("test", [](const rapidjson::Value& /*value*/, rapidjson::Document& /*response*/)
 		{
+
 		});
 	}
 

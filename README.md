@@ -5,3 +5,5 @@
 
 
 # X-Labs: Launcher
+
+Current build: https://master.xlabs.dev/data/xlabs.exe

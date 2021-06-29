@@ -202,3 +202,14 @@ img.container {
         border: 5px solid #222;
     }
 }
+
+#vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99999;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+}

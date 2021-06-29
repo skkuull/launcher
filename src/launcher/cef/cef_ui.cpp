@@ -116,11 +116,11 @@ namespace cef
 		window_info.y = (GetSystemMetrics(SM_CYSCREEN) - window_info.height) / 2;
 		window_info.style &= ~(WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_THICKFRAME | WS_TILEDWINDOW | WS_VISIBLE);
 		window_info.style |= WS_POPUP;
-		window_info.ex_style |= WS_EX_LAYERED;
+		//window_info.ex_style |= WS_EX_LAYERED;
 
 		const auto dpi_scale = get_dpi_scale();
-		window_info.width *= dpi_scale;
-		window_info.height *= dpi_scale;
+		window_info.width = static_cast<int>(window_info.width * dpi_scale);
+		window_info.height = static_cast<int>(window_info.height * dpi_scale);
 
 		if (!this->ui_handler_)
 		{

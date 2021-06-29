@@ -50,7 +50,7 @@ namespace cef
 		                    CefRefPtr<CefRunContextMenuCallback> callback) override;
 
 		void OnDraggableRegionsChanged(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame,
-                                       const std::vector<CefDraggableRegion>& regions) override;
+		                               const std::vector<CefDraggableRegion>& regions) override;
 
 		bool is_closed(CefRefPtr<CefBrowser> browser);
 

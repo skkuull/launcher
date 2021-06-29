@@ -10,7 +10,7 @@ namespace cef
 	namespace
 	{
 		using window_enumerator = std::function<bool(HWND)>;
-	
+
 		BOOL child_window_enumerator(const HWND window, const LPARAM data)
 		{
 			return (*reinterpret_cast<const window_enumerator*>(data))(window) ? TRUE : FALSE;
@@ -89,29 +89,28 @@ namespace cef
 	}
 
 	void cef_ui_handler::OnDraggableRegionsChanged(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame,
-			const std::vector<CefDraggableRegion>& regions)
+	                                               const std::vector<CefDraggableRegion>& regions)
 	{
 		SetRectRgn(this->draggable_region_, 0, 0, 0, 0);
 
 		for (auto& region : regions)
 		{
-			RECT rect{region.bounds.x, region.bounds.y,
+			RECT rect{
+				region.bounds.x, region.bounds.y,
 				region.bounds.x + region.bounds.width,
-				region.bounds.y + region.bounds.height};
+				region.bounds.y + region.bounds.height
+			};
 
-#pragma warning(push)
-#pragma warning(disable: 4244)
 			const auto dpi_scale = cef_ui::get_dpi_scale();
-			rect.left *= dpi_scale;
-			rect.top *= dpi_scale;
-			rect.right *= dpi_scale;
-			rect.bottom *= dpi_scale;
-#pragma warning(pop)
+			rect.left = static_cast<LONG>(rect.left * dpi_scale);
+			rect.top = static_cast<LONG>(rect.top * dpi_scale);
+			rect.right = static_cast<LONG>(rect.right * dpi_scale);
+			rect.bottom = static_cast<LONG>(rect.bottom * dpi_scale);
 
 			const auto sub_region = CreateRectRgn(rect.left, rect.top, rect.right, rect.bottom);
-			
+
 			CombineRgn(this->draggable_region_, this->draggable_region_, sub_region,
-                 region.draggable ? RGN_OR : RGN_DIFF);
+			           region.draggable ? RGN_OR : RGN_DIFF);
 			DeleteObject(sub_region);
 		}
 
@@ -134,12 +133,12 @@ namespace cef
 	void cef_ui_handler::setup_event_handler(const HWND window, const bool setup_children, HWND root_window)
 	{
 		root_window = root_window ? root_window : window;
-		
+
 		const auto target_handler = reinterpret_cast<LONG_PTR>(&cef_ui_handler::static_event_handler);
 		const auto proc_handler = GetWindowLongPtrW(window, GWLP_WNDPROC);
-		
+
 		if (proc_handler != target_handler)
-		{		
+		{
 			SetPropA(window, "xlabs_root_window", root_window);
 			SetPropA(window, "xlabs_ui_handler", this);
 			SetPropA(window, "xlabs_proc_handler", reinterpret_cast<HANDLE>(proc_handler));
@@ -147,7 +146,7 @@ namespace cef
 			SetWindowLongPtrW(window, GWLP_WNDPROC, target_handler);
 		}
 
-		if(setup_children)
+		if (setup_children)
 		{
 			enum_child_windows(window, [this, root_window](const HWND child)
 			{
@@ -156,17 +155,18 @@ namespace cef
 			});
 		}
 	}
-	
-	LRESULT cef_ui_handler::event_handler(const HWND window, const UINT message, const WPARAM w_param, const LPARAM l_param) const
-	{	
+
+	LRESULT cef_ui_handler::event_handler(const HWND window, const UINT message, const WPARAM w_param,
+	                                      const LPARAM l_param) const
+	{
 		const auto root_window = GetPropA(window, "xlabs_root_window");
 		const auto handler = GetPropA(window, "xlabs_proc_handler");
-		if(!handler)
+		if (!handler)
 		{
 			return DefWindowProcW(window, message, w_param, l_param);
 		}
 
-		if(message == WM_LBUTTONDOWN)
+		if (message == WM_LBUTTONDOWN)
 		{
 			const POINTS points = MAKEPOINTS(l_param);
 			const POINT point = {points.x, points.y};
@@ -182,10 +182,11 @@ namespace cef
 		return handler_func(window, message, w_param, l_param);
 	}
 
-	LRESULT CALLBACK cef_ui_handler::static_event_handler(const HWND window, const UINT message, const WPARAM w_param, const LPARAM l_param)
+	LRESULT CALLBACK cef_ui_handler::static_event_handler(const HWND window, const UINT message, const WPARAM w_param,
+	                                                      const LPARAM l_param)
 	{
 		const auto handler = GetPropA(window, "xlabs_ui_handler");
-		if(!handler)
+		if (!handler)
 		{
 			return DefWindowProcW(window, message, w_param, l_param);
 		}

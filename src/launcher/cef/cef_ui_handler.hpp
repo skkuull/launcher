@@ -3,7 +3,7 @@
 namespace cef
 {
 	class cef_ui_handler : public CefClient, public CefDisplayHandler, public CefLifeSpanHandler, public CefLoadHandler,
-	                       public CefContextMenuHandler
+	                       public CefContextMenuHandler, public CefDragHandler
 	{
 	public:
 		explicit cef_ui_handler();
@@ -29,6 +29,11 @@ namespace cef
 			return this;
 		}
 
+		CefRefPtr<CefDragHandler> GetDragHandler() override
+		{
+			return this;
+		}
+
 		void OnAfterCreated(CefRefPtr<CefBrowser> browser) override;
 		void OnBeforeClose(CefRefPtr<CefBrowser> browser) override;
 
@@ -44,10 +49,18 @@ namespace cef
 		                    CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model,
 		                    CefRefPtr<CefRunContextMenuCallback> callback) override;
 
+		void OnDraggableRegionsChanged(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame,
+                                       const std::vector<CefDraggableRegion>& regions) override;
+
 		bool is_closed(CefRefPtr<CefBrowser> browser);
 
 	private:
+		HRGN draggable_region_;
 		std::vector<CefRefPtr<CefBrowser>> browser_list;
+
+		void setup_event_handler(HWND window, bool setup_children, HWND root_window = nullptr);
+		LRESULT event_handler(HWND window, UINT message, WPARAM w_param, LPARAM l_param) const;
+		static LRESULT CALLBACK static_event_handler(HWND window, UINT message, WPARAM w_param, LPARAM l_param);
 
 	IMPLEMENT_REFCOUNTING(cef_ui_handler);
 	};

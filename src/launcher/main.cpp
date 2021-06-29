@@ -32,7 +32,9 @@ namespace
 
 		cef_ui.add_command("show", [&cef_ui](const auto&, auto&)
 		{
-			ShowWindow(cef_ui.get_window(), SW_SHOWDEFAULT);
+			const auto window = cef_ui.get_window();
+			ShowWindow(window, SW_SHOWDEFAULT);
+			SetForegroundWindow(window);
 		});
 
 		cef_ui.add_command("test", [](const rapidjson::Value& /*value*/, rapidjson::Document& /*response*/)

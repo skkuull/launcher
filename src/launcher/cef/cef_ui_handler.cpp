@@ -95,9 +95,20 @@ namespace cef
 
 		for (auto& region : regions)
 		{
-			const auto sub_region = CreateRectRgn(region.bounds.x, region.bounds.y,
-			                                        region.bounds.x + region.bounds.width,
-			                                        region.bounds.y + region.bounds.height);
+			RECT rect{region.bounds.x, region.bounds.y,
+				region.bounds.x + region.bounds.width,
+				region.bounds.y + region.bounds.height};
+
+#pragma warning(push)
+#pragma warning(disable: 4244)
+			const auto dpi_scale = cef_ui::get_dpi_scale();
+			rect.left *= dpi_scale;
+			rect.top *= dpi_scale;
+			rect.right *= dpi_scale;
+			rect.bottom *= dpi_scale;
+#pragma warning(pop)
+
+			const auto sub_region = CreateRectRgn(rect.left, rect.top, rect.right, rect.bottom);
 			
 			CombineRgn(this->draggable_region_, this->draggable_region_, sub_region,
                  region.draggable ? RGN_OR : RGN_DIFF);

@@ -26,6 +26,8 @@ namespace cef
 
 		void add_command(std::string command, command_handler handler);
 
+		static double get_dpi_scale();
+
 	private:
 		utils::nt::library process_;
 		bool initialized_ = false;

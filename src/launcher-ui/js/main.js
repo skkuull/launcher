@@ -92,7 +92,7 @@ function removeActiveElement() {
 }
 
 function handleNavigationClick(e) {
-    const el = e.target;
+    const el = this;
     if (el.classList.contains("active")) {
         return;
     }

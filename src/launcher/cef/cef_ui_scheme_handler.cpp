@@ -443,11 +443,11 @@ namespace cef
 		rapidjson::Document response{};
 		response.SetObject();
 
-		if(command.IsString())
+		if (command.IsString())
 		{
 			std::string command_name{command.GetString(), command.GetStringLength()};
 			auto handler = this->command_handlers_.find(command_name);
-			if(handler != this->command_handlers_.end())
+			if (handler != this->command_handlers_.end())
 			{
 				handler->second(data, response);
 			}

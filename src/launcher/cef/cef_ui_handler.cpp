@@ -28,7 +28,7 @@ namespace cef
 		number get_last_dpi_scale(const HWND window)
 		{
 			const auto result = GetPropA(window, "xlabs_dpi_scale");
-			if(!result)
+			if (!result)
 			{
 				return static_cast<number>(1.0);
 			}
@@ -58,9 +58,8 @@ namespace cef
 
 		void apply_window_style(const HWND window)
 		{
-
 			const auto base = reinterpret_cast<HINSTANCE>(GetWindowLongPtrA(window, GWLP_HINSTANCE));
-			
+
 			const auto icon = LPARAM(LoadIconA(base, MAKEINTRESOURCEA(IDI_ICON_1)));
 			PostMessageA(window, WM_SETICON, ICON_SMALL, icon);
 			PostMessageA(window, WM_SETICON, ICON_BIG, icon);
@@ -153,7 +152,7 @@ namespace cef
 	                                               const std::vector<CefDraggableRegion>& regions)
 	{
 		const auto window = browser->GetHost()->GetWindowHandle();
-		
+
 		this->draggable_regions_ = regions;
 		this->update_drag_regions(window);
 		this->setup_event_handler(window, true);
@@ -246,20 +245,20 @@ namespace cef
 			}
 		}
 
-		if(message == WM_NCCALCSIZE)
+		if (message == WM_NCCALCSIZE)
 		{
-			if( w_param == TRUE )
+			if (w_param == TRUE)
 			{
 				return 0;
 			}
 		}
 
-		if(message == WM_DPICHANGED && window == root_window)
+		if (message == WM_DPICHANGED && window == root_window)
 		{
 			PostMessageA(window, WM_DELAYEDDPICHANGE, 0, 0);
 		}
-		
-		if(message == WM_DELAYEDDPICHANGE && window == root_window)
+
+		if (message == WM_DELAYEDDPICHANGE && window == root_window)
 		{
 			RECT rect;
 			GetWindowRect(window, &rect);
@@ -273,14 +272,15 @@ namespace cef
 
 			const auto new_x = int((rect.left * dpi_scale) / last_scale);
 			const auto new_y = int((rect.top * dpi_scale) / last_scale);
-			
+
 			const auto new_width = int((width * dpi_scale) / last_scale);
 			const auto new_height = int((height * dpi_scale) / last_scale);
 
 			MoveWindow(window, new_x, new_y, new_width, new_height, TRUE);
 
 			// Update rounded corners
-			SetWindowRgn(window, CreateRoundRectRgn(0, 0, rect.right - rect.left, rect.bottom - rect.top, 15, 15), TRUE);
+			SetWindowRgn(window, CreateRoundRectRgn(0, 0, rect.right - rect.left, rect.bottom - rect.top, 15, 15),
+			             TRUE);
 
 			this->update_drag_regions(window);
 			return TRUE;

@@ -67,6 +67,6 @@ namespace cef
 		LRESULT event_handler(HWND window, UINT message, WPARAM w_param, LPARAM l_param) const;
 		static LRESULT CALLBACK static_event_handler(HWND window, UINT message, WPARAM w_param, LPARAM l_param);
 
-	IMPLEMENT_REFCOUNTING(cef_ui_handler);
+		IMPLEMENT_REFCOUNTING(cef_ui_handler);
 	};
 }

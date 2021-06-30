@@ -43,6 +43,18 @@ namespace
 		{
 
 		});
+
+		cef_ui.add_command("switch-dev", [&cef_ui](const auto&, auto&)
+		{
+			utils::nt::relaunch_self("--xlabs-channel-develop");
+			cef_ui.close_browser();
+		});
+
+		cef_ui.add_command("switch-main", [&cef_ui](const auto&, auto&)
+		{
+			utils::nt::relaunch_self("--xlabs-channel-main");
+			cef_ui.close_browser();
+		});
 	}
 
 	void show_window(const utils::nt::library& process, const std::string& path)

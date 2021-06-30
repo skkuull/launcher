@@ -12,8 +12,8 @@
 
 #define UPDATE_SERVER "https://master.xlabs.dev/"
 
-#define UPDATE_FILE UPDATE_SERVER "files.json"
-#define UPDATE_FOLDER UPDATE_SERVER "data/"
+#define UPDATE_FILE_MAIN UPDATE_SERVER "files.json"
+#define UPDATE_FOLDER_MAIN UPDATE_SERVER "data/"
 
 #define UPDATE_FILE_DEV UPDATE_SERVER "files-dev.json"
 #define UPDATE_FOLDER_DEV UPDATE_SERVER "data-dev/"
@@ -29,9 +29,9 @@ namespace updater
 			return GIT_BRANCH == "master"s;
 		}
 
-		bool is_channel_switch_to_master()
+		bool is_channel_switch_to_main()
 		{
-			return strstr(GetCommandLineA(), "--xlabs-channel-master");
+			return strstr(GetCommandLineA(), "--xlabs-channel-main");
 		}
 
 		bool is_channel_switch_to_develop()
@@ -39,20 +39,20 @@ namespace updater
 			return strstr(GetCommandLineA(), "--xlabs-channel-develop");
 		}
 
-		bool is_master_channel()
+		bool is_main_channel()
 		{
-			static auto result = (is_master_branch() || is_channel_switch_to_master()) && !is_channel_switch_to_develop();
+			static auto result = (is_master_branch() || is_channel_switch_to_main()) && !is_channel_switch_to_develop();
 			return result;
 		}
 
 		std::string get_update_file()
 		{
-			return is_master_channel() ? UPDATE_FILE : UPDATE_FILE_DEV;
+			return is_main_channel() ? UPDATE_FILE_MAIN : UPDATE_FILE_DEV;
 		}
 
 		std::string get_update_folder()
 		{
-			return is_master_channel() ? UPDATE_FOLDER : UPDATE_FOLDER_DEV;
+			return is_main_channel() ? UPDATE_FOLDER_MAIN : UPDATE_FOLDER_DEV;
 		}
 
 		std::vector<file_info> parse_file_infos(const std::string& json)

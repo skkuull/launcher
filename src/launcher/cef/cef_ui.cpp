@@ -153,7 +153,7 @@ namespace cef
 		// Add rounded corners
 		SetWindowRgn(window, CreateRoundRectRgn(0, 0, window_info.width, window_info.height, 15, 15), TRUE);
 
-		SetWindowLong(window, GWL_EXSTYLE, GetWindowLong(window, GWL_EXSTYLE) | WS_EX_LAYERED);
+		//SetWindowLong(window, GWL_EXSTYLE, GetWindowLong(window, GWL_EXSTYLE) | WS_EX_LAYERED);
 	}
 
 	HWND cef_ui::get_window() const

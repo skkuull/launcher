@@ -88,7 +88,7 @@ img.container {
 
 #navigation>.separator {
     width: calc(100% + 40px);
-    height: 1px;
+    height: 0.5px;
     display: block;
     background: #F5F6FF;
     margin-left: -20px;
@@ -160,56 +160,50 @@ img.container {
     background: rgb(255, 61, 61);
 }
 
-@media (prefers-color-scheme: dark) {
+#vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 1px;
+    bottom: 1px;
+    z-index: 99999;
+    border-radius: 7px;
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+}
 
+@media (prefers-color-scheme: dark) {
     html,
     body {
         background: #333;
         color: #bbb;
     }
-
     .container {
         background: #222;
     }
-
-
     .card {
         background: transparent;
     }
-
     .card>.title {
         background: #222;
     }
-
     #navigation {
         background: #222;
     }
-
     #navigation>.separator {
         background: #333;
     }
-
     #navigation>.element {
         box-shadow: 0 9px 19px rgba(0, 0, 0, 0.2), 0 15px 12px rgba(0, 0, 0, 0.2);
     }
-
     #controls {
         background: #222;
         border-bottom: 1px solid #333;
     }
-
     #controls>span {
         border: 5px solid #222;
     }
-}
-
-#vignette {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 99999;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
-    pointer-events: none;
+    #vignette {
+        box-shadow: inset 0 0 2px rgb(255, 255, 255, 0.2);
+    }
 }

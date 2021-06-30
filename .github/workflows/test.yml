@@ -1,0 +1,24 @@
+name: Notify Discord
+
+on:
+  push:
+    branches:
+      - "*"
+  issues:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'XLabsProject'
+    steps:
+      - name: Setup master environment
+        if: github.ref == 'refs/heads/master'
+        run: export XLABS_MASTER_PATH=master
+
+      - name: Setup develop environment
+        if: github.ref == 'refs/heads/develop'
+        run: export XLABS_MASTER_PATH=develop
+        
+      - name: Setup develop environment
+        if: github.ref == 'refs/heads/develop'
+        run: echo ${{ env.XLABS_MASTER_PATH }}

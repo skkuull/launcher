@@ -1,5 +1,7 @@
 #pragma once
 
+#define WM_DELAYEDDPICHANGE (WM_USER + 0x123)
+
 namespace cef
 {
 	class cef_ui_handler : public CefClient, public CefDisplayHandler, public CefLifeSpanHandler, public CefLoadHandler,
@@ -56,7 +58,10 @@ namespace cef
 
 	private:
 		HRGN draggable_region_;
+		std::vector<CefDraggableRegion> draggable_regions_;
 		std::vector<CefRefPtr<CefBrowser>> browser_list;
+
+		void update_drag_regions(HWND window) const;
 
 		void setup_event_handler(HWND window, bool setup_children, HWND root_window = nullptr);
 		LRESULT event_handler(HWND window, UINT message, WPARAM w_param, LPARAM l_param) const;

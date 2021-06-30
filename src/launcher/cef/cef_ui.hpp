@@ -26,8 +26,6 @@ namespace cef
 
 		void add_command(std::string command, command_handler handler);
 
-		static double get_dpi_scale();
-
 	private:
 		utils::nt::library process_;
 		bool initialized_ = false;
@@ -36,8 +34,6 @@ namespace cef
 		std::string path_;
 		CefRefPtr<CefBrowser> browser_;
 		CefRefPtr<cef_ui_handler> ui_handler_;
-
-		void set_window_style(const CefWindowInfo& window_info) const;
 
 		static void invoke_close_browser(CefRefPtr<CefBrowser> browser);
 	};

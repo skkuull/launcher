@@ -35,6 +35,8 @@ namespace
 			const auto window = cef_ui.get_window();
 			ShowWindow(window, SW_SHOWDEFAULT);
 			SetForegroundWindow(window);
+
+			PostMessageA(window, WM_DELAYEDDPICHANGE, 0, 0);
 		});
 
 		cef_ui.add_command("test", [](const rapidjson::Value& /*value*/, rapidjson::Document& /*response*/)

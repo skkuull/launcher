@@ -3,7 +3,11 @@
 #include "cef/cef_ui.hpp"
 #include "cef/cef_ui_handler.hpp"
 
-#include "utils/string.hpp"
+#ifdef _WIN64
+using number = double;
+#else
+using number = float;
+#endif
 
 namespace cef
 {
@@ -19,6 +23,60 @@ namespace cef
 		void enum_child_windows(const HWND window, const window_enumerator& callback)
 		{
 			EnumChildWindows(window, &child_window_enumerator, reinterpret_cast<LPARAM>(&callback));
+		}
+
+		number get_last_dpi_scale(const HWND window)
+		{
+			const auto result = GetPropA(window, "xlabs_dpi_scale");
+			if(!result)
+			{
+				return static_cast<number>(1.0);
+			}
+
+			return *reinterpret_cast<const number*>(&result);
+		}
+
+		void store_dpi_scale(const HWND window, const number dpi_scale)
+		{
+			SetPropA(window, "xlabs_dpi_scale", *reinterpret_cast<const HANDLE*>(&dpi_scale));
+		}
+
+		number get_dpi_scale(const HWND window)
+		{
+			const utils::nt::library user32{"user32.dll"};
+			const auto get_dpi = user32 ? user32.get_proc<UINT(WINAPI *)(HWND)>("GetDpiForWindow") : nullptr;
+
+			if (!get_dpi)
+			{
+				return 1.0;
+			}
+
+			const auto unaware_dpi = 96.0;
+			const auto dpi = get_dpi(window);
+			return static_cast<number>(dpi / unaware_dpi);
+		}
+
+		void apply_window_style(const HWND window)
+		{
+
+			const auto base = reinterpret_cast<HINSTANCE>(GetWindowLongPtrA(window, GWLP_HINSTANCE));
+			
+			const auto icon = LPARAM(LoadIconA(base, MAKEINTRESOURCEA(IDI_ICON_1)));
+			PostMessageA(window, WM_SETICON, ICON_SMALL, icon);
+			PostMessageA(window, WM_SETICON, ICON_BIG, icon);
+
+			// Doesn't work in combination with rounded corners :(
+			//static const MARGINS shadow{ 1,1,1,1 };
+			//DwmExtendFrameIntoClientArea(window, &shadow);
+			//SetWindowPos(window, nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE);
+
+			// This causes issues for now :(
+			//const auto class_style = GetClassLongW(window, GCL_STYLE);
+			//SetClassLongW(window, GCL_STYLE, class_style | CS_DROPSHADOW);
+
+			//SetWindowLong(window, GWL_EXSTYLE, GetWindowLong(window, GWL_EXSTYLE) | WS_EX_LAYERED);
+
+			PostMessageA(window, WM_DELAYEDDPICHANGE, 0, 0);
 		}
 	}
 
@@ -36,7 +94,10 @@ namespace cef
 	{
 		CEF_REQUIRE_UI_THREAD();
 		this->browser_list.push_back(browser);
-		this->setup_event_handler(browser->GetHost()->GetWindowHandle(), true);
+
+		const auto window = browser->GetHost()->GetWindowHandle();
+		this->setup_event_handler(window, true);
+		apply_window_style(window);
 	}
 
 	void cef_ui_handler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
@@ -91,30 +152,11 @@ namespace cef
 	void cef_ui_handler::OnDraggableRegionsChanged(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame,
 	                                               const std::vector<CefDraggableRegion>& regions)
 	{
-		SetRectRgn(this->draggable_region_, 0, 0, 0, 0);
-
-		for (auto& region : regions)
-		{
-			RECT rect{
-				region.bounds.x, region.bounds.y,
-				region.bounds.x + region.bounds.width,
-				region.bounds.y + region.bounds.height
-			};
-
-			const auto dpi_scale = cef_ui::get_dpi_scale();
-			rect.left = static_cast<LONG>(rect.left * dpi_scale);
-			rect.top = static_cast<LONG>(rect.top * dpi_scale);
-			rect.right = static_cast<LONG>(rect.right * dpi_scale);
-			rect.bottom = static_cast<LONG>(rect.bottom * dpi_scale);
-
-			const auto sub_region = CreateRectRgn(rect.left, rect.top, rect.right, rect.bottom);
-
-			CombineRgn(this->draggable_region_, this->draggable_region_, sub_region,
-			           region.draggable ? RGN_OR : RGN_DIFF);
-			DeleteObject(sub_region);
-		}
-
-		this->setup_event_handler(browser->GetHost()->GetWindowHandle(), true);
+		const auto window = browser->GetHost()->GetWindowHandle();
+		
+		this->draggable_regions_ = regions;
+		this->update_drag_regions(window);
+		this->setup_event_handler(window, true);
 	}
 
 	bool cef_ui_handler::is_closed(CefRefPtr<CefBrowser> browser)
@@ -128,6 +170,32 @@ namespace cef
 		}
 
 		return true;
+	}
+
+	void cef_ui_handler::update_drag_regions(const HWND window) const
+	{
+		SetRectRgn(this->draggable_region_, 0, 0, 0, 0);
+
+		for (auto& region : this->draggable_regions_)
+		{
+			RECT rect{
+				region.bounds.x, region.bounds.y,
+				region.bounds.x + region.bounds.width,
+				region.bounds.y + region.bounds.height
+			};
+
+			const auto dpi_scale = get_dpi_scale(window);
+			rect.left = static_cast<LONG>(rect.left * dpi_scale);
+			rect.top = static_cast<LONG>(rect.top * dpi_scale);
+			rect.right = static_cast<LONG>(rect.right * dpi_scale);
+			rect.bottom = static_cast<LONG>(rect.bottom * dpi_scale);
+
+			const auto sub_region = CreateRectRgn(rect.left, rect.top, rect.right, rect.bottom);
+
+			CombineRgn(this->draggable_region_, this->draggable_region_, sub_region,
+			           region.draggable ? RGN_OR : RGN_DIFF);
+			DeleteObject(sub_region);
+		}
 	}
 
 	void cef_ui_handler::setup_event_handler(const HWND window, const bool setup_children, HWND root_window)
@@ -173,7 +241,7 @@ namespace cef
 			if (PtInRegion(this->draggable_region_, point.x, point.y))
 			{
 				ReleaseCapture();
-				SendMessageA(static_cast<HWND>(root_window), WM_NCLBUTTONDOWN, HTCAPTION, 0);
+				PostMessageA(static_cast<HWND>(root_window), WM_NCLBUTTONDOWN, HTCAPTION, 0);
 				return 1;
 			}
 		}
@@ -184,6 +252,38 @@ namespace cef
 			{
 				return 0;
 			}
+		}
+
+		if(message == WM_DPICHANGED && window == root_window)
+		{
+			PostMessageA(window, WM_DELAYEDDPICHANGE, 0, 0);
+		}
+		
+		if(message == WM_DELAYEDDPICHANGE && window == root_window)
+		{
+			RECT rect;
+			GetWindowRect(window, &rect);
+
+			const auto dpi_scale = get_dpi_scale(window);
+			const auto last_scale = get_last_dpi_scale(window);
+			store_dpi_scale(window, dpi_scale);
+
+			const auto width = rect.right - rect.left;
+			const auto height = rect.bottom - rect.top;
+
+			const auto new_x = int((rect.left * dpi_scale) / last_scale);
+			const auto new_y = int((rect.top * dpi_scale) / last_scale);
+			
+			const auto new_width = int((width * dpi_scale) / last_scale);
+			const auto new_height = int((height * dpi_scale) / last_scale);
+
+			MoveWindow(window, new_x, new_y, new_width, new_height, TRUE);
+
+			// Update rounded corners
+			SetWindowRgn(window, CreateRoundRectRgn(0, 0, rect.right - rect.left, rect.bottom - rect.top, 15, 15), TRUE);
+
+			this->update_drag_regions(window);
+			return TRUE;
 		}
 
 		const auto handler_func = static_cast<decltype(DefWindowProcW)*>(handler);

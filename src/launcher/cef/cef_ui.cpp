@@ -53,21 +53,6 @@ namespace cef
 		this->command_handlers_[std::move(command)] = std::move(handler);
 	}
 
-	double cef_ui::get_dpi_scale()
-	{
-		const utils::nt::library user32{"user32.dll"};
-		const auto get_dpi = user32 ? user32.get_proc<UINT(WINAPI *)(HWND)>("GetDpiForWindow") : nullptr;
-
-		if (!get_dpi)
-		{
-			return 1.0;
-		}
-
-		const auto unaware_dpi = 96.0;
-		const auto dpi = get_dpi(GetForegroundWindow());
-		return dpi / unaware_dpi;
-	}
-
 	int cef_ui::run_process() const
 	{
 		const CefMainArgs args(this->process_.get_handle());
@@ -116,10 +101,6 @@ namespace cef
 		window_info.y = (GetSystemMetrics(SM_CYSCREEN) - window_info.height) / 2;
 		window_info.style = WS_POPUP | WS_THICKFRAME | WS_CAPTION;
 
-		const auto dpi_scale = get_dpi_scale();
-		window_info.width = static_cast<int>(window_info.width * dpi_scale);
-		window_info.height = static_cast<int>(window_info.height * dpi_scale);
-
 		if (!this->ui_handler_)
 		{
 			this->ui_handler_ = new cef_ui_handler();
@@ -128,32 +109,6 @@ namespace cef
 		const auto url = "http://xlabs/" + file;
 		this->browser_ = CefBrowserHost::CreateBrowserSync(window_info, this->ui_handler_, url, browser_settings,
 		                                                   nullptr, nullptr);
-
-		this->set_window_style(window_info);
-	}
-
-	void cef_ui::set_window_style(const CefWindowInfo& window_info) const
-	{
-		auto* const window = this->get_window();
-		if (!window) return;
-
-		const auto icon = LPARAM(LoadIconA(this->process_.get_handle(), MAKEINTRESOURCEA(IDI_ICON_1)));
-		SendMessageA(window, WM_SETICON, ICON_SMALL, icon);
-		SendMessageA(window, WM_SETICON, ICON_BIG, icon);
-
-		// Doesn't work in combination with rounded corners :(
-		//static const MARGINS shadow{ 1,1,1,1 };
-		//DwmExtendFrameIntoClientArea(window, &shadow);
-		//SetWindowPos(window, nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE);
-
-		// This causes issues for now :(
-		//const auto class_style = GetClassLongW(window, GCL_STYLE);
-		//SetClassLongW(window, GCL_STYLE, class_style | CS_DROPSHADOW);
-
-		// Add rounded corners
-		SetWindowRgn(window, CreateRoundRectRgn(0, 0, window_info.width, window_info.height, 15, 15), TRUE);
-
-		//SetWindowLong(window, GWL_EXSTYLE, GetWindowLong(window, GWL_EXSTYLE) | WS_EX_LAYERED);
 	}
 
 	HWND cef_ui::get_window() const

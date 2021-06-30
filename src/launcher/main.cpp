@@ -114,10 +114,11 @@ int CALLBACK WinMain(const HINSTANCE instance, HINSTANCE, LPSTR, int)
 
 		enable_dpi_awareness();
 
-#ifdef CI_BUILD
+#if defined(CI_BUILD) && !defined(DEBUG)
 		run_as_singleton();
 		updater::run(path);
 #endif
+
 		show_window(lib, path);
 		return 0;
 	}

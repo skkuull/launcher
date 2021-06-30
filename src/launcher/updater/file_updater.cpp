@@ -29,14 +29,19 @@ namespace updater
 			return GIT_BRANCH == "master"s;
 		}
 
-		bool is_channel_switch()
+		bool is_channel_switch_to_master()
 		{
-			return strstr(GetCommandLineA(), "--xlabs-channel-switch");
+			return strstr(GetCommandLineA(), "--xlabs-channel-master");
+		}
+
+		bool is_channel_switch_to_develop()
+		{
+			return strstr(GetCommandLineA(), "--xlabs-channel-develop");
 		}
 
 		bool is_master_channel()
 		{
-			static auto result = is_master_branch() ^ is_channel_switch();
+			static auto result = (is_master_branch() || is_channel_switch_to_master()) && !is_channel_switch_to_develop();
 			return result;
 		}
 

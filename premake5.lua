@@ -73,8 +73,8 @@ newoption {
 }
 
 newoption {
-	trigger = "dev-build",
-	description = "Enable development builds of the client."
+	trigger = "ci-build",
+	description = "Enable CI builds of the client."
 }
 
 newaction {
@@ -238,12 +238,8 @@ editandcontinue "Off"
 warnings "Extra"
 characterset "ASCII"
 
-if _OPTIONS["dev-build"] then
-	defines {"DEV_BUILD"}
-end
-
-if os.getenv("CI") then
-	defines {"CI"}
+if _OPTIONS["ci-build"] then
+	defines {"CI_BUILD"}
 end
 
 flags {"NoIncrementalLink", "NoMinimalRebuild", "MultiProcessorCompile", "No64BitChecks"}

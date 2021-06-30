@@ -112,9 +112,12 @@ int CALLBACK WinMain(const HINSTANCE instance, HINSTANCE, LPSTR, int)
 			return run_subprocess(lib, path);
 		}
 
-		run_as_singleton();
 		enable_dpi_awareness();
+
+#ifdef CI_BUILD
+		run_as_singleton();
 		updater::run(path);
+#endif
 		show_window(lib, path);
 		return 0;
 	}

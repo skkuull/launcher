@@ -34,7 +34,7 @@ jobs:
         shell: powershell
 
       - name: Generate project files
-        run: tools/premake5 vs2019
+        run: tools/premake5 vs2019 --ci-build
 
       - name: Set up problem matching
         uses: ammaraskar/msvc-problem-matcher@master

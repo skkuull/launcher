@@ -246,7 +246,7 @@ namespace updater
 
 	bool file_updater::is_outdated_file(const file_info& file) const
 	{
-#ifdef DEV_BUILD
+#ifndef CI_BUILD
 		if (file.name == UPDATE_HOST_BINARY)
 		{
 			return false;

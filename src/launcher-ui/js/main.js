@@ -1,4 +1,5 @@
 window.addEventListener("load", initialize);
+window.channel = window.executeCommand("get-channel");
 
 function sleep(milliseconds) {
     return new Promise(resolve => {
@@ -29,6 +30,34 @@ function waitForAllImages() {
     });
 }
 
+function addStyleElement(css) {
+    var head = document.head || document.getElementsByTagName('head')[0],
+        style = document.createElement('style');
+
+    head.appendChild(style);
+
+    style.type = 'text/css';
+    if (style.styleSheet) {
+        // This is required for IE8 and below.
+        style.styleSheet.cssText = css;
+    } else {
+        style.appendChild(document.createTextNode(css));
+    }
+}
+
+function getOtherChannel(channel) {
+    if(channel == "main") {
+        return "dev";
+    }
+    return "main";
+}
+
+function adjustChannelElements() {
+    window.channel.then(channel => {
+        addStyleElement(`.channel-${getOtherChannel(channel)}{display: none;}`);
+    });
+}
+
 function initialize() {
     initializeNavigation() //
         .then(() => waitForAllImages()) //
@@ -42,6 +71,8 @@ function initialize() {
     document.querySelector("#close-button").onclick = () => {
         window.executeCommand("close");
     };
+
+    adjustChannelElements();
 }
 
 function initializeNavigation() {

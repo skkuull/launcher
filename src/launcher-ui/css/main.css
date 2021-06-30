@@ -133,11 +133,17 @@ img.container {
     -moz-user-select: none;
     user-select: none;
     padding: 5px;
-    text-align: right;
+    text-align: center;
     border-bottom: 1px solid #F5F6FF;
 }
 
-#controls>span {
+#controls>.title {
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+#controls>span.button {
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -148,7 +154,7 @@ img.container {
     transition: opacity 0.1s linear;
 }
 
-#controls>span:hover {
+#controls>span.button:hover {
     opacity: 1;
 }
 
@@ -214,7 +220,7 @@ button:hover{
         background: #222;
         border-bottom: 1px solid #333;
     }
-    #controls>span {
+    #controls>span.button {
         border: 5px solid #222;
     }
     #vignette {

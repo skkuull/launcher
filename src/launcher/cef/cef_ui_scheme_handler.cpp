@@ -417,7 +417,7 @@ namespace cef
 	}
 
 	CefResourceHandler* cef_ui_scheme_handler_factory::handle_command(const CefRefPtr<CefRequest>& request,
-	                                                                  const std::string& path)
+	                                                                  const std::string& path) const
 	{
 		if (path != "/command")
 		{
@@ -456,7 +456,7 @@ namespace cef
 		rapidjson::StringBuffer buffer{};
 		rapidjson::Writer<rapidjson::StringBuffer, rapidjson::Document::EncodingType, rapidjson::ASCII<>>
 			writer(buffer);
-		doc.Accept(writer);
+		response.Accept(writer);
 
 		json.assign(buffer.GetString(), buffer.GetLength());
 

@@ -8,8 +8,6 @@
 #include <utils/http.hpp>
 #include <utils/io.hpp>
 
-#include <version.hpp>
-
 #define UPDATE_SERVER "https://master.xlabs.dev/"
 
 #define UPDATE_FILE_MAIN UPDATE_SERVER "files.json"
@@ -24,27 +22,6 @@ namespace updater
 {
 	namespace
 	{
-		bool is_master_branch()
-		{
-			return GIT_BRANCH == "master"s;
-		}
-
-		bool is_channel_switch_to_main()
-		{
-			return strstr(GetCommandLineA(), "--xlabs-channel-main");
-		}
-
-		bool is_channel_switch_to_develop()
-		{
-			return strstr(GetCommandLineA(), "--xlabs-channel-develop");
-		}
-
-		bool is_main_channel()
-		{
-			static auto result = (is_master_branch() || is_channel_switch_to_main()) && !is_channel_switch_to_develop();
-			return result;
-		}
-
 		std::string get_update_file()
 		{
 			return is_main_channel() ? UPDATE_FILE_MAIN : UPDATE_FILE_DEV;

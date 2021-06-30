@@ -4,6 +4,7 @@
 
 #include <utils/named_mutex.hpp>
 #include <utils/string.hpp>
+#include <utils/exit_callback.hpp>
 
 namespace
 {
@@ -32,27 +33,35 @@ namespace
 
 		cef_ui.add_command("show", [&cef_ui](const auto&, auto&)
 		{
-			const auto window = cef_ui.get_window();
+			auto* const window = cef_ui.get_window();
 			ShowWindow(window, SW_SHOWDEFAULT);
 			SetForegroundWindow(window);
 
 			PostMessageA(window, WM_DELAYEDDPICHANGE, 0, 0);
 		});
 
-		cef_ui.add_command("test", [](const rapidjson::Value& /*value*/, rapidjson::Document& /*response*/)
+		cef_ui.add_command("get-channel", [&cef_ui](auto&, rapidjson::Document& response)
 		{
-
+			const std::string channel = updater::is_main_channel() ? "main" : "dev";
+			response.SetString(channel, response.GetAllocator());
 		});
 
-		cef_ui.add_command("switch-dev", [&cef_ui](const auto&, auto&)
+		cef_ui.add_command("switch-channel", [&cef_ui](const rapidjson::Value& value, auto&)
 		{
-			utils::nt::relaunch_self("--xlabs-channel-develop");
-			cef_ui.close_browser();
-		});
+			if (!value.HasMember("channel") || !value["channel"].IsString())
+			{
+				return;
+			}
 
-		cef_ui.add_command("switch-main", [&cef_ui](const auto&, auto&)
-		{
-			utils::nt::relaunch_self("--xlabs-channel-main");
+			const auto& channel_value = value["channel"];
+			const std::string channel{channel_value.GetString(), channel_value.GetStringLength()};
+			const auto* const command_line = channel == "main" ? "--xlabs-channel-main" : "--xlabs-channel-develop";
+
+			utils::at_exit([command_line]()
+			{
+				utils::nt::relaunch_self(command_line);
+			});
+
 			cef_ui.close_browser();
 		});
 	}
@@ -103,18 +112,10 @@ namespace
 	void run_as_singleton()
 	{
 		static named_mutex mutex{"xlabs-launcher"};
-
-		for(int i = 0; i < 5; ++i)
+		if (!mutex.try_lock(3s))
 		{
-			if (mutex.try_lock(0ms))
-			{
-				return;
-			}
-
-			std::this_thread::sleep_for(1s);
+			throw std::runtime_error{"X Labs launcher is already running"};
 		}
-
-		throw std::runtime_error{"X Labs launcher is already running"};
 	}
 }
 

@@ -8,7 +8,7 @@
 #include <utils/nt.hpp>
 #include <utils/string.hpp>
 
-#include <version.hpp>
+#include "../updater/updater.hpp"
 
 #define CEF_PATH "data/cef/" CONFIG_NAME
 
@@ -19,7 +19,7 @@ namespace cef
 		void delay_load_cef(const std::string& path)
 		{
 			static std::atomic<bool> initialized{false};
-			bool uninitialized = false;
+			auto uninitialized = false;
 			if (!initialized.compare_exchange_strong(uninitialized, true))
 			{
 				return;
@@ -96,7 +96,7 @@ namespace cef
 		//browser_settings.windowless_frame_rate = 60;
 
 		CefWindowInfo window_info;
-		window_info.SetAsPopup(nullptr, "X Labs"s + (GIT_BRANCH == "master"s ? "" : " (DEV-BUILD)"));
+		window_info.SetAsPopup(nullptr, "X Labs"s + (updater::is_main_channel() ? "" : " (DEV-BUILD)"));
 		window_info.width = 800; //GetSystemMetrics(SM_CXVIRTUALSCREEN);
 		window_info.height = 500; //GetSystemMetrics(SM_CYVIRTUALSCREEN);
 		window_info.x = (GetSystemMetrics(SM_CXSCREEN) - window_info.width) / 2;

@@ -22,6 +22,6 @@ namespace cef
 		IMPLEMENT_REFCOUNTING(cef_ui_scheme_handler_factory);
 		DISALLOW_COPY_AND_ASSIGN(cef_ui_scheme_handler_factory);
 
-		CefResourceHandler* handle_command(const CefRefPtr<CefRequest>& request, const std::string& path);
+		CefResourceHandler* handle_command(const CefRefPtr<CefRequest>& request, const std::string& path) const;
 	};
 }

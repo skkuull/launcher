@@ -4,8 +4,34 @@
 #include "updater_ui.hpp"
 #include "file_updater.hpp"
 
+#include <version.hpp>
+
 namespace updater
 {
+	namespace
+	{
+		bool is_master_branch()
+		{
+			return GIT_BRANCH == "master"s;
+		}
+
+		bool is_channel_switch_to_main()
+		{
+			return strstr(GetCommandLineA(), "--xlabs-channel-main");
+		}
+
+		bool is_channel_switch_to_develop()
+		{
+			return strstr(GetCommandLineA(), "--xlabs-channel-develop");
+		}
+	}
+
+	bool is_main_channel()
+	{
+		static auto result = (is_master_branch() || is_channel_switch_to_main()) && !is_channel_switch_to_develop();
+		return result;
+	}
+
 	void run(const std::string& base)
 	{
 		const utils::nt::library self;

@@ -1,4 +1,4 @@
-name: Notify Discord
+name: Test
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   issues:
 
 jobs:
-  notify:
+  test:
     runs-on: ubuntu-latest
     if: github.repository_owner == 'XLabsProject'
     steps:
@@ -20,5 +20,4 @@ jobs:
         run: export XLABS_MASTER_PATH=develop
         
       - name: Setup develop environment
-        if: github.ref == 'refs/heads/develop'
         run: echo ${{ env.XLABS_MASTER_PATH }}

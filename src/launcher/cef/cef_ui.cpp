@@ -114,9 +114,7 @@ namespace cef
 		window_info.height = 500; //GetSystemMetrics(SM_CYVIRTUALSCREEN);
 		window_info.x = (GetSystemMetrics(SM_CXSCREEN) - window_info.width) / 2;
 		window_info.y = (GetSystemMetrics(SM_CYSCREEN) - window_info.height) / 2;
-		window_info.style &= ~(WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_THICKFRAME | WS_TILEDWINDOW | WS_VISIBLE);
-		window_info.style |= WS_POPUP;
-		//window_info.ex_style |= WS_EX_LAYERED;
+		window_info.style = WS_POPUP | WS_THICKFRAME | WS_CAPTION;
 
 		const auto dpi_scale = get_dpi_scale();
 		window_info.width = static_cast<int>(window_info.width * dpi_scale);
@@ -143,11 +141,19 @@ namespace cef
 		SendMessageA(window, WM_SETICON, ICON_SMALL, icon);
 		SendMessageA(window, WM_SETICON, ICON_BIG, icon);
 
-		SetWindowRgn(window, CreateRoundRectRgn(0, 0, window_info.width, window_info.height, 15, 15), TRUE);
+		// Doesn't work in combination with rounded corners :(
+		//static const MARGINS shadow{ 1,1,1,1 };
+		//DwmExtendFrameIntoClientArea(window, &shadow);
+		//SetWindowPos(window, nullptr, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE);
 
 		// This causes issues for now :(
 		//const auto class_style = GetClassLongW(window, GCL_STYLE);
 		//SetClassLongW(window, GCL_STYLE, class_style | CS_DROPSHADOW);
+
+		// Add rounded corners
+		SetWindowRgn(window, CreateRoundRectRgn(0, 0, window_info.width, window_info.height, 15, 15), TRUE);
+
+		SetWindowLong(window, GWL_EXSTYLE, GetWindowLong(window, GWL_EXSTYLE) | WS_EX_LAYERED);
 	}
 
 	HWND cef_ui::get_window() const

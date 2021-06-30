@@ -178,6 +178,14 @@ namespace cef
 			}
 		}
 
+		if(message == WM_NCCALCSIZE)
+		{
+			if( w_param == TRUE )
+			{
+				return 0;
+			}
+		}
+
 		const auto handler_func = static_cast<decltype(DefWindowProcW)*>(handler);
 		return handler_func(window, message, w_param, l_param);
 	}

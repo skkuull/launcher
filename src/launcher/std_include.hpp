@@ -9,6 +9,7 @@
 
 #include <Windows.h>
 #include <ShlObj.h>
+#include <dwmapi.h>
 
 #include <string>
 #include <mutex>
@@ -47,6 +48,8 @@
 #include <include/wrapper/cef_stream_resource_handler.h>
 
 #pragma warning(pop)
+
+#pragma comment(lib, "Dwmapi.lib")
 
 #ifdef DEBUG
 #define CONFIG_NAME "debug"

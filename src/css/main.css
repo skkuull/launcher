@@ -167,7 +167,7 @@ img.container {
     right: 1px;
     bottom: 1px;
     z-index: 99999;
-    border-radius: 7px;
+    border-radius: 8px;
     box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
     pointer-events: none;
 }

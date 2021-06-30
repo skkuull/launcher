@@ -8,6 +8,8 @@
 #include <utils/nt.hpp>
 #include <utils/string.hpp>
 
+#include <version.hpp>
+
 #define CEF_PATH "data/cef/" CONFIG_NAME
 
 namespace cef
@@ -94,7 +96,7 @@ namespace cef
 		//browser_settings.windowless_frame_rate = 60;
 
 		CefWindowInfo window_info;
-		window_info.SetAsPopup(nullptr, "X Labs");
+		window_info.SetAsPopup(nullptr, "X Labs"s + (GIT_BRANCH == "master"s ? "" : " (DEV-BUILD)"));
 		window_info.width = 800; //GetSystemMetrics(SM_CXVIRTUALSCREEN);
 		window_info.height = 500; //GetSystemMetrics(SM_CYVIRTUALSCREEN);
 		window_info.x = (GetSystemMetrics(SM_CXSCREEN) - window_info.width) / 2;

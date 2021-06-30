@@ -70,6 +70,14 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop')
     steps:
+      - name: Setup master environment
+        if: github.ref == 'refs/heads/master'
+        run: echo "XLABS_MASTER_PATH=${{ secrets.XLABS_MASTER_SSH_PATH }}" >> $GITHUB_ENV
+
+      - name: Setup develop environment
+        if: github.ref == 'refs/heads/develop'
+        run: echo "XLABS_MASTER_PATH=${{ secrets.XLABS_MASTER_SSH_PATH_DEV }}" >> $GITHUB_ENV
+
       - name: Download Release UI artifacts
         uses: actions/download-artifact@v2
         with:
@@ -103,19 +111,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Remove old CEF artifacts
-        run: ssh ${{ secrets.XLABS_MASTER_SSH_USER }}@${{ secrets.XLABS_MASTER_SSH_ADDRESS }} rm -rf ${{ secrets.XLABS_MASTER_SSH_PATH }}/cef/release/*
+        run: ssh ${{ secrets.XLABS_MASTER_SSH_USER }}@${{ secrets.XLABS_MASTER_SSH_ADDRESS }} rm -rf ${{ env.XLABS_MASTER_PATH }}/cef/release/*
 
       - name: Remove old UI artifacts
-        run: ssh ${{ secrets.XLABS_MASTER_SSH_USER }}@${{ secrets.XLABS_MASTER_SSH_ADDRESS }} rm -rf ${{ secrets.XLABS_MASTER_SSH_PATH }}/launcher-ui/*
+        run: ssh ${{ secrets.XLABS_MASTER_SSH_USER }}@${{ secrets.XLABS_MASTER_SSH_ADDRESS }} rm -rf ${{ env.XLABS_MASTER_PATH }}/launcher-ui/*
 
       - name: Upload UI artifacts
-        run: rsync -avz ./ui/ ${{ secrets.XLABS_MASTER_SSH_USER }}@${{ secrets.XLABS_MASTER_SSH_ADDRESS }}:${{ secrets.XLABS_MASTER_SSH_PATH }}/launcher-ui/
+        run: rsync -avz ./ui/ ${{ secrets.XLABS_MASTER_SSH_USER }}@${{ secrets.XLABS_MASTER_SSH_ADDRESS }}:${{ env.XLABS_MASTER_PATH }}/launcher-ui/
 
       - name: Upload CEF binaries
-        run: rsync -avz ./cef/ ${{ secrets.XLABS_MASTER_SSH_USER }}@${{ secrets.XLABS_MASTER_SSH_ADDRESS }}:${{ secrets.XLABS_MASTER_SSH_PATH }}/cef/release/
+        run: rsync -avz ./cef/ ${{ secrets.XLABS_MASTER_SSH_USER }}@${{ secrets.XLABS_MASTER_SSH_ADDRESS }}:${{ env.XLABS_MASTER_PATH }}/cef/release/
 
       - name: Upload launcher binary
-        run: rsync -avz xlabs.exe ${{ secrets.XLABS_MASTER_SSH_USER }}@${{ secrets.XLABS_MASTER_SSH_ADDRESS }}:${{ secrets.XLABS_MASTER_SSH_PATH }}/
+        run: rsync -avz xlabs.exe ${{ secrets.XLABS_MASTER_SSH_USER }}@${{ secrets.XLABS_MASTER_SSH_ADDRESS }}:${{ env.XLABS_MASTER_PATH }}/
 
       - name: Publish changes
         run: ssh ${{ secrets.XLABS_MASTER_SSH_USER }}@${{ secrets.XLABS_MASTER_SSH_ADDRESS }} ${{ secrets.XLABS_MASTER_SSH_CHANGE_PUBLISH_COMMAND }}

@@ -13,11 +13,11 @@ jobs:
     steps:
       - name: Setup master environment
         if: github.ref == 'refs/heads/master'
-        run: export XLABS_MASTER_PATH=master
+        run: echo "XLABS_MASTER_PATH=master" >> $GITHUB_ENV
 
       - name: Setup develop environment
         if: github.ref == 'refs/heads/develop'
-        run: export XLABS_MASTER_PATH=develop
+        run: echo "XLABS_MASTER_PATH=develop" >> $GITHUB_ENV
         
       - name: Setup develop environment
         run: echo ${{ env.XLABS_MASTER_PATH }}

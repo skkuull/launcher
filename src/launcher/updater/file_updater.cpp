@@ -8,15 +8,48 @@
 #include <utils/http.hpp>
 #include <utils/io.hpp>
 
+#include <version.hpp>
+
 #define UPDATE_SERVER "https://master.xlabs.dev/"
+
 #define UPDATE_FILE UPDATE_SERVER "files.json"
 #define UPDATE_FOLDER UPDATE_SERVER "data/"
+
+#define UPDATE_FILE_DEV UPDATE_SERVER "files-dev.json"
+#define UPDATE_FOLDER_DEV UPDATE_SERVER "data-dev/"
+
 #define UPDATE_HOST_BINARY "xlabs.exe"
 
 namespace updater
 {
 	namespace
 	{
+		bool is_master_branch()
+		{
+			return GIT_BRANCH == "master"s;
+		}
+
+		bool is_channel_switch()
+		{
+			return strstr(GetCommandLineA(), "--xlabs-channel-switch");
+		}
+
+		bool is_master_channel()
+		{
+			static auto result = is_master_branch() ^ is_channel_switch();
+			return result;
+		}
+
+		std::string get_update_file()
+		{
+			return is_master_channel() ? UPDATE_FILE : UPDATE_FILE_DEV;
+		}
+
+		std::string get_update_folder()
+		{
+			return is_master_channel() ? UPDATE_FOLDER : UPDATE_FOLDER_DEV;
+		}
+
 		std::vector<file_info> parse_file_infos(const std::string& json)
 		{
 			rapidjson::Document doc{};
@@ -51,7 +84,7 @@ namespace updater
 
 		std::vector<file_info> get_file_infos()
 		{
-			const auto json = utils::http::get_data(UPDATE_FILE);
+			const auto json = utils::http::get_data(get_update_file());
 			if (!json)
 			{
 				return {};
@@ -122,7 +155,7 @@ namespace updater
 
 	void file_updater::update_file(const file_info& file) const
 	{
-		const auto url = UPDATE_FOLDER + file.name;
+		const auto url = get_update_folder() + file.name;
 		const auto data = utils::http::get_data(url, {}, [&](const size_t progress)
 		{
 			this->listener_.file_progress(file, progress);

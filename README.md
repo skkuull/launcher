@@ -7,5 +7,5 @@
 
 # X-Labs: Launcher
 
-Master Launcher: https://master.xlabs.dev/data/xlabs.exe  
-Develop launcher: https://master.xlabs.dev/data-dev/xlabs.exe  
+Stable Launcher: https://master.xlabs.dev/data/xlabs.exe  
+Experimental launcher: https://master.xlabs.dev/data-dev/xlabs.exe  

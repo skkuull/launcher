@@ -20,7 +20,7 @@ jobs:
           lfs: false
 
       - name: Test
-        run: echo "${{ github.base_ref }}"
+        run: echo "${{ github.event.pull_request.base.ref }}"
 
       # Set up committer info and GPG key
       - name: Import GPG key

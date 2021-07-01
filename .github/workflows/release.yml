@@ -8,7 +8,7 @@ on:
 jobs:
   merge:
     runs-on: ubuntu-latest
-    name: Merge release
+    name: Merge Release
     steps:
       - name: Check out files
         uses: actions/checkout@v2
@@ -47,14 +47,17 @@ jobs:
             "${{ github.event.pull_request.merge_commit_sha }}"
           git push origin --tags
 
-      - name: Merge master -> develop
-        if: github.event.pull_request.merged
-        uses: devmasx/merge-branch@v1.3.1
+      - name: Create Pull Request
+        uses: repo-sync/pull-request@v2
         with:
-          type: now
-          from_branch: master
-          target_branch: develop
           github_token: ${{ secrets.XLABS_CI_GITHUB_TOKEN }}
+          source_branch: "master"
+          destination_branch: "develop"
+          pr_body: |
+            This Pull Request merges the release of X Labs Launcher ${{ steps.extract_version.outputs.version }} and was [automatically created by a workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) triggered by @${{ github.actor }}.
+          pr_title: Merge release ${{ steps.extract_version.outputs.version }}
+          pr_label: release
+
 
   notify:
     name: Notify Discord

@@ -6,9 +6,9 @@ on:
       - "master"
     types: [closed]
 jobs:
-  modify:
+  merge:
     runs-on: ubuntu-latest
-    name:  release
+    name: Merge release
     steps:
       - name: Check out files
         uses: actions/checkout@v2
@@ -47,15 +47,14 @@ jobs:
             "${{ github.event.pull_request.merge_commit_sha }}"
           git push origin --tags
 
-      - name: Check out develop
-        uses: actions/checkout@v2
-        with:
-          ref: develop
-
       - name: Merge back to develop
         if: github.event.pull_request.merged
         run: |
-          git merge --no-ff -m "Merge release ${{ steps.extract_version.outputs.version }}" origin/master
+          git checkout develop
+          git fetch
+          git rebase
+          git merge -no-ff --no-commit origin/master
+          git commit -S -m "Merge release ${{ steps.extract_version.outputs.version }}"
           git push
 
   notify:

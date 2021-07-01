@@ -19,6 +19,9 @@ jobs:
           submodules: false
           lfs: false
 
+      - name: Test
+        run: echo "${{ github.base_ref }}"
+
       # Set up committer info and GPG key
       - name: Import GPG key
         if: github.event.pull_request.merged && github.base_ref == 'master'

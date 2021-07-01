@@ -14,6 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Normalize version
+        id: normalize_version
+        run: |
+          version="${{ github.event.inputs.version }}"
+          version="v${version#v}"
+          echo "::set-output name=version::$version"
+
       # Set up committer info and GPG key
       - name: Import GPG key
         id: import_gpg
@@ -35,6 +42,6 @@ jobs:
           source_branch: "develop"
           destination_branch: "master"
           pr_body: |
-            This Pull Request is for the release of X Labs Launcher ${{ github.event.inputs.version }} and was [automatically created by a workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) triggered by @${{ github.actor }}.
-          pr_title: Release ${{ github.event.inputs.version }}
+            This Pull Request is for the release of X Labs Launcher ${{ steps.normalize_version.outputs.version }} and was [automatically created by a workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) triggered by @${{ github.actor }}.
+          pr_title: Release ${{ steps.normalize_version.outputs.version }}
           pr_label: release

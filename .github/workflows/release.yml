@@ -53,7 +53,7 @@ jobs:
           git fetch origin develop
           git checkout develop
           git reset --hard origin/develop
-          git merge -no-ff --no-commit origin/master
+          git merge --no-ff --no-commit origin/master
           git commit -S -m "Merge release ${{ steps.extract_version.outputs.version }}"
           git push
 

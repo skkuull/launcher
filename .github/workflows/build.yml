@@ -19,12 +19,9 @@ jobs:
           submodules: false
           lfs: false
 
-      - name: Test
-        run: echo "${{ github.ref }}"
-
       # Set up committer info and GPG key
       - name: Import GPG key
-        if: github.event.pull_request.merged && github.base_ref == 'master'
+        if: github.event.pull_request.merged && github.ref == 'refs/heads/master'
         id: import_gpg
         uses: XLabsProject/ghaction-import-gpg@25d9d6ab99eb355c169c33c2306a72df85d9f516
         with:
@@ -38,7 +35,7 @@ jobs:
           passphrase: ${{ secrets.XLABS_CI_GPG_PASSWORD }}
 
       - name: Extract version from pull request
-        if: github.event.pull_request.merged && github.base_ref == 'master'
+        if: github.event.pull_request.merged && github.ref == 'refs/heads/master'
         id: extract_version
         run: |
           title="${{ github.event.pull_request.title }}"
@@ -46,7 +43,7 @@ jobs:
           echo "::set-output name=version::$version"
 
       - name: Create annotated tag
-        if: github.event.pull_request.merged && github.base_ref == 'master'
+        if: github.event.pull_request.merged && github.ref == 'refs/heads/master'
         run: |
           git tag -a -m "${{ github.event.pull_request.title }}" \
             "${{ steps.extract_version.outputs.version }}" \

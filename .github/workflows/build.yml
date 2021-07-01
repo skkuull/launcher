@@ -9,8 +9,50 @@ on:
       - "*"
     types: [opened, synchronize, reopened]
 jobs:
+  modify:
+    runs-on: ubuntu-latest
+    name: Apply Git modifications if any are necessary
+    steps:
+      - name: Check out files
+        uses: actions/checkout@v2
+        with:
+          submodules: false
+          lfs: false
+
+      # Set up committer info and GPG key
+      - name: Import GPG key
+        if: github.event.pull_request.merged && github.ref == 'refs/heads/master'
+        id: import_gpg
+        uses: XLabsProject/ghaction-import-gpg@25d9d6ab99eb355c169c33c2306a72df85d9f516
+        with:
+          git-commit-gpgsign: true
+          git-committer-email: "${{ secrets.XLABS_CI_EMAIL }}"
+          git-committer-name: "${{ secrets.XLABS_CI_NAME }}"
+          git-push-gpgsign: false
+          git-tag-gpgsign: true
+          git-user-signingkey: true
+          gpg-private-key: ${{ secrets.XLABS_CI_GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.XLABS_CI_GPG_PASSWORD }}
+
+      - name: Extract version from pull request
+        if: github.event.pull_request.merged && github.ref == 'refs/heads/master'
+        id: extract_version
+        run: |
+          title="${{ github.event.pull_request.title }}"
+          version="${title#Release }"
+          echo "::set-output name=version::$version"
+
+      - name: Create annotated tag
+        if: github.event.pull_request.merged && github.ref == 'refs/heads/master'
+        run: |
+          git tag -a -m "${{ github.event.pull_request.title }}" \
+            "${{ steps.extract_version.outputs.version }}" \
+            "${{ github.event.pull_request.merge_commit_sha }}"
+          git push origin --tags
+
   build:
     name: Build binaries
+    needs: modify
     runs-on: windows-latest
     strategy:
       matrix:

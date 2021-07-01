@@ -177,7 +177,8 @@ namespace cef
 
 		for (auto& region : this->draggable_regions_)
 		{
-			RECT rect{
+			RECT rect
+			{
 				region.bounds.x, region.bounds.y,
 				region.bounds.x + region.bounds.width,
 				region.bounds.y + region.bounds.height
@@ -263,18 +264,24 @@ namespace cef
 			RECT rect;
 			GetWindowRect(window, &rect);
 
+			const auto width = rect.right - rect.left;
+			const auto height = rect.bottom - rect.top;
+
+			POINT center
+			{
+				rect.left + width / 2,
+				rect.top + height / 2,
+			};
+
 			const auto dpi_scale = get_dpi_scale(window);
 			const auto last_scale = get_last_dpi_scale(window);
 			store_dpi_scale(window, dpi_scale);
 
-			const auto width = rect.right - rect.left;
-			const auto height = rect.bottom - rect.top;
-
-			const auto new_x = int((rect.left * dpi_scale) / last_scale);
-			const auto new_y = int((rect.top * dpi_scale) / last_scale);
-
 			const auto new_width = int((width * dpi_scale) / last_scale);
 			const auto new_height = int((height * dpi_scale) / last_scale);
+
+			const auto new_x = center.x - (new_width / 2);
+			const auto new_y = center.y - (new_height / 2);
 
 			MoveWindow(window, new_x, new_y, new_width, new_height, TRUE);
 

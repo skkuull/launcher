@@ -106,12 +106,21 @@ img.container {
     border-radius: 15px;
     display: block;
     width: 7vw;
+    height: 7vw;
     box-shadow: 0 9px 19px rgba(0, 0, 0, 0.1), 0 15px 12px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.1s linear;
 }
 
 #navigation>.element:first-of-type {
     margin-top: 0px;
+}
+
+#navigation>#settings.element {
+    background: #b2b2bb;
+}
+
+#navigation>#settings.element>img {
+    filter: invert(87%) sepia(22%) saturate(126%) hue-rotate(199deg) brightness(103%) contrast(108%);
 }
 
 #navigation>.element:hover,
@@ -141,6 +150,7 @@ img.container {
     position: absolute;
     left: 0;
     right: 0;
+    pointer-events: none;
 }
 
 #controls>span.button {
@@ -215,6 +225,13 @@ button:hover{
     }
     #navigation>.element {
         box-shadow: 0 9px 19px rgba(0, 0, 0, 0.2), 0 15px 12px rgba(0, 0, 0, 0.2);
+    }
+    #navigation>#settings.element {
+        background: #333;
+    }
+    
+    #navigation>#settings.element>img {
+        filter: invert(8%) sepia(8%) saturate(0%) hue-rotate(347deg) brightness(94%) contrast(88%);
     }
     #controls {
         background: #222;

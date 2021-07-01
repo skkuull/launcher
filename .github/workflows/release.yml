@@ -47,15 +47,14 @@ jobs:
             "${{ github.event.pull_request.merge_commit_sha }}"
           git push origin --tags
 
-      - name: Merge back to develop
+      - name: Merge master -> develop
         if: github.event.pull_request.merged
-        run: |
-          git fetch origin develop
-          git checkout develop
-          git reset --hard origin/develop
-          git merge --no-ff --no-commit origin/master
-          git commit -S -m "Merge release ${{ steps.extract_version.outputs.version }}"
-          git push
+        uses: devmasx/merge-branch@v1.3.1
+        with:
+          type: now
+          from_branch: master
+          target_branch: develop
+          github_token: ${{ github.token }}
 
   notify:
     name: Notify Discord

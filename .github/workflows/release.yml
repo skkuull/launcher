@@ -47,6 +47,17 @@ jobs:
             "${{ github.event.pull_request.merge_commit_sha }}"
           git push origin --tags
 
+      - name: Check out develop
+        uses: actions/checkout@v2
+        with:
+          ref: develop
+
+      - name: Merge back to develop
+        if: github.event.pull_request.merged
+        run: |
+          git merge --no-ff -m "Merge release ${{ steps.extract_version.outputs.version }}" origin/master
+          git push
+
   notify:
     name: Notify Discord
     runs-on: ubuntu-latest

@@ -46,7 +46,7 @@ function addStyleElement(css) {
 }
 
 function getOtherChannel(channel) {
-    if(channel == "main") {
+    if (channel == "main") {
         return "dev";
     }
     return "main";
@@ -107,11 +107,22 @@ function loadInitialPage() {
     return loadNavigationPage(el.id);
 }
 
+function setInnerHTML(elm, html) {
+    elm.innerHTML = html;
+    Array.from(elm.querySelectorAll("script")).forEach(oldScript => {
+        const newScript = document.createElement("script");
+        Array.from(oldScript.attributes)
+            .forEach(attr => newScript.setAttribute(attr.name, attr.value));
+        newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+        oldScript.parentNode.replaceChild(newScript, oldScript);
+    });
+}
+
 function loadNavigationPage(page) {
     var content = document.querySelector("#content");
     return fetch(`./pages/${page}.html`).then(data => {
         return data.text()
     }).then(text => {
-        content.innerHTML = text;
+        setInnerHTML(content, text);
     });
 }

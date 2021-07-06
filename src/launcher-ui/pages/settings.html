@@ -3,10 +3,19 @@
         <span class="title">Settings</span>
         <span class="content">
             <p>
-                <button class="channel-dev" onclick="executeCommand('switch-channel', {'channel': 'main'})">Switch to
-                    main channel</button>
-                <button class="channel-main" onclick="executeCommand('switch-channel', {'channel': 'dev'})">Switch to
-                    develop channel</button>
+                <span class="two-grid">
+                    <span>Update channel</span>
+                    <span>
+                        <span class="input">
+                            <input type="radio" id="channel-main" name="channel" value="channel-main">
+                            <label for="channel-main">Stable</label>
+                        </span>
+                        <span class="input">
+                            <input type="radio" id="channel-dev" name="channel" value="channel-dev">
+                            <label for="channel-dev">Experimental</label>
+                        </span>
+                    </span>
+                </span>
             </p>
         </span>
     </span>
@@ -22,3 +31,49 @@
         flex: 1 1 auto;
     }
 </style>
+
+<script>
+    function handleChannelChange() {
+        const id = this.id;
+        const newChannel = id.substring(8);
+        console.log(newChannel);
+
+        window.channel.then(channel => {
+            if (channel == newChannel) {
+                return;
+            }
+
+            const channelTexts = {
+                'main': `You are about to switch to the <b>stable</b> channel.<br><br>Are you sure you want to do that?`,
+                'dev': `You are about to switch to the <b>experimental</b> channel.<br><br>You will get more frequent updates, but overall stability may decrease.<br><br>Are you sure you want to do that?`,
+            };
+
+            const text = channelTexts[newChannel];
+
+            window.showMessageBox("⚠ Warning",
+                text,
+                ["Yes", "Cancel"]).then(index => {
+                if (index == 0) {
+                    executeCommand('switch-channel', {
+                        'channel': newChannel
+                    });
+                } else {
+                    checkCurrentChannelRadio();
+                }
+            });
+        });
+    }
+
+    function checkCurrentChannelRadio() {
+        window.channel.then(channel => {
+            document.querySelector(`input#channel-${channel}`).checked = true;
+        });
+    }
+
+    checkCurrentChannelRadio();
+
+    var nodes = document.querySelectorAll('input[name="channel"]');
+    for (var i = 0; i < nodes.length; ++i) {
+        nodes[i].onclick = handleChannelChange;
+    }
+</script>

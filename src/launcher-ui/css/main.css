@@ -2,7 +2,7 @@ html,
 body {
     margin: 0;
     background: #F5F6FF;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI Emoji', Tahoma, Geneva, Verdana, sans-serif;
     width: 100%;
     height: 100%;
     user-select: none;
@@ -176,6 +176,41 @@ img.container {
     background: rgb(255, 61, 61);
 }
 
+#message-box{
+    background: rgba(0,0,0,0.4);
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.1s linear;
+}
+
+#message-box.visible {
+    pointer-events: all;
+    opacity: 1;
+}
+
+#message-box>.container{
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translate(-50%, -50%);
+    min-width: 300px;
+    background: #F5F6FF;
+}
+
+#message-box .mb-buttons{
+    border-top: 1px solid white;
+    display: block;
+    text-align: right;
+    margin-top: 15px;
+    padding-top: 15px;
+}
+
 #vignette {
     position: fixed;
     top: 0;
@@ -194,12 +229,69 @@ button {
     margin: 5px;
     border: 1px solid #F5F6FF;
     border-radius: 5px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     transition: box-shadow 0.1s linear;
 }
 
-button:hover{
-    box-shadow: 0 0 0 rgba(0,0,0,0), 0 0 0 rgba(0,0,0,0);
+button:hover {
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.input {
+    margin: 5px;
+}
+
+.two-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+    gap: 0px 0px;
+    grid-template-areas: ". .";
+}
+
+.two-grid>:first-child {
+    text-align: left;
+}
+
+.two-grid>:last-child {
+    text-align: right;
+}
+
+input[type="radio"] {
+    position: relative;
+    margin: 5px;
+}
+
+input[type="radio"]::before {
+    content: '';
+    width: 22px;
+    height: 22px;
+    display: block;
+    border-radius: 50%;
+    left: -5px;
+    top: -3px;
+    position: absolute;
+    background: #222;
+}
+
+input[type="radio"]::after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    display: block;
+    border-radius: 50%;
+    left: 0;
+    top: 2px;
+    position: absolute;
+    background: #222;
+}
+
+input[type="radio"]:checked {
+    display: inline;
+}
+
+input[type="radio"]:checked::after {
+    background: #777;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -229,7 +321,6 @@ button:hover{
     #navigation>#settings.element {
         background: #333;
     }
-    
     #navigation>#settings.element>img {
         filter: invert(8%) sepia(8%) saturate(0%) hue-rotate(347deg) brightness(94%) contrast(88%);
     }
@@ -240,12 +331,17 @@ button:hover{
     #controls>span.button {
         border: 5px solid #222;
     }
+    #message-box>.container{
+        background: #333;
+    }
+    #message-box .mb-buttons{
+        border-top: 1px solid #222;
+    }
     #vignette {
         box-shadow: inset 0 0 2px rgb(255, 255, 255, 0.2);
     }
-
-    button{
-        color:#bbb;
+    button {
+        color: #bbb;
         background: #222;
         border: 1px solid #333;
     }

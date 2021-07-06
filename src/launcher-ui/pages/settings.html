@@ -1,30 +1,23 @@
 <div class="grid">
     <span id="data" class="container card">
         <span class="title">Settings</span>
-    <span class="content">
+        <span class="content">
             <p>
                 <span class="two-grid">
                     <span>Update channel</span>
-    <span>
+                    <span>
                         <span class="input">
                             <input type="radio" id="channel-main" name="channel" value="channel-main">
                             <label for="channel-main">Stable</label>
                         </span>
-    <span class="input">
+                        <span class="input">
                             <input type="radio" id="channel-dev" name="channel" value="channel-dev">
                             <label for="channel-dev">Experimental</label>
                         </span>
-    </span>
-    </span>
-    </p>
-
-    <p>
-        <button class="channel-dev" onclick="executeCommand('switch-channel', {'channel': 'main'})">Switch to
-                    main channel</button>
-        <button class="channel-main" onclick="executeCommand('switch-channel', {'channel': 'dev'})">Switch to
-                    develop channel</button>
-    </p>
-    </span>
+                    </span>
+                </span>
+            </p>
+        </span>
     </span>
 </div>
 
@@ -33,7 +26,7 @@
         display: flex;
         width: 100%;
     }
-    
+
     #data {
         flex: 1 1 auto;
     }
@@ -49,6 +42,25 @@
             if (channel == newChannel) {
                 return;
             }
+
+            const channelNames = {
+                'main': 'stable',
+                'dev': 'experimental',
+            };
+
+            const channelName = channelNames[newChannel];
+
+            window.showMessageBox("Warning",
+                `You are about to switch to the ${channelName} channel. Are you sure you want to do that?`,
+                ["Yes", "Cancel"]).then(index => {
+                if (index == 0) {
+                    executeCommand('switch-channel', {
+                        'channel': newChannel
+                    });
+                } else {
+                    checkCurrentChannelRadio();
+                }
+            });
         });
     }
 

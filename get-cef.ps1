@@ -1,4 +1,4 @@
-$cefVersion = 'cef_binary_91.1.21+g9dd45fe+chromium-91.0.4472.114_windows64'
+$cefVersion = 'cef_binary_91.1.22+gc67b5dd+chromium-91.0.4472.124_windows64'
 
 #-------------------------------------------------
 Write-Output 'Deleting old CEF binaries...'

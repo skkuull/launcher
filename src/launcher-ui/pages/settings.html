@@ -43,15 +43,15 @@
                 return;
             }
 
-            const channelNames = {
-                'main': 'stable',
-                'dev': 'experimental',
+            const channelTexts = {
+                'main': `You are about to switch to the <b>stable</b> channel.<br><br>Are you sure you want to do that?`,
+                'dev': `You are about to switch to the <b>experimental</b> channel.<br><br>You will get more frequent updates, but overall stability may decrease.<br><br>Are you sure you want to do that?`,
             };
 
-            const channelName = channelNames[newChannel];
+            const text = channelTexts[newChannel];
 
-            window.showMessageBox("Warning",
-                `You are about to switch to the ${channelName} channel. Are you sure you want to do that?`,
+            window.showMessageBox("⚠ Warning",
+                text,
                 ["Yes", "Cancel"]).then(index => {
                 if (index == 0) {
                     executeCommand('switch-channel', {

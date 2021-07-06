@@ -13,10 +13,10 @@ function constructMessageBox(title, message, buttons) {
             };
 
             const titleElement = messageBox.querySelector(".mb-title");
-            titleElement.textContent = title;
+            titleElement.innerHTML = title;
 
             const contentElement = messageBox.querySelector(".mb-content");
-            contentElement.textContent = message;
+            contentElement.innerHTML = message;
 
             const buttonElement = messageBox.querySelector(".mb-buttons");
             buttonElement.textContent = "";
@@ -26,7 +26,7 @@ function constructMessageBox(title, message, buttons) {
             buttons.forEach((value, index) => {
 
                 var button = document.createElement("button");
-                button.textContent = value;
+                button.innerHTML = value;
                 button.onclick = resolveInternal.bind(this, index);
                 buttonElement.appendChild(button);
             });

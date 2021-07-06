@@ -135,6 +135,7 @@ img.container {
 }
 
 #controls {
+    z-index: 99999;
     background: white;
     flex: 0 1 auto;
     -webkit-user-select: none;
@@ -217,7 +218,7 @@ img.container {
     left: 0;
     right: 1px;
     bottom: 1px;
-    z-index: 99999;
+    z-index: 999999;
     border-radius: 8px;
     box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.2);
     pointer-events: none;

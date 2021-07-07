@@ -6,6 +6,7 @@ body {
     width: 100%;
     height: 100%;
     user-select: none;
+    color: #555;
 }
 
 body {
@@ -116,11 +117,12 @@ img.container {
 }
 
 #navigation>#settings.element {
-    background: #b2b2bb;
+    background: #F5F6FF;
 }
 
 #navigation>#settings.element>img {
-    filter: invert(87%) sepia(22%) saturate(126%) hue-rotate(199deg) brightness(103%) contrast(108%);
+    filter: brightness(0) saturate(100%) invert(50%);
+    width: 100%;
 }
 
 #navigation>.element:hover,
@@ -230,7 +232,7 @@ button {
     margin: 5px;
     border: 1px solid #eff2fa;
     border-radius: 5px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.07), 0 3px 6px rgba(0, 0, 0, 0.13);
     transition: box-shadow 0.1s linear;
 }
 
@@ -324,7 +326,7 @@ input[type="radio"]:checked::after {
         background: #333;
     }
     #navigation>#settings.element>img {
-        filter: invert(8%) sepia(8%) saturate(0%) hue-rotate(347deg) brightness(94%) contrast(88%);
+        filter: invert(8%) sepia(8%) saturate(0%) hue-rotate(347deg) brightness(94%) contrast(100%);
     }
     #controls {
         background: #222;
@@ -345,7 +347,7 @@ input[type="radio"]:checked::after {
     button {
         color: #bbb;
         background: #222;
-        border: 1px solid #333;
+        border: 1px solid rgb(51 51 51 / 50%);
     }
     input[type="radio"]::before {
         background: #222;

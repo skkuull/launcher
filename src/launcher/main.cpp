@@ -2,8 +2,9 @@
 #include "cef/cef_ui.hpp"
 #include "updater/updater.hpp"
 
-#include <utils/named_mutex.hpp>
+#include <utils/com.hpp>
 #include <utils/string.hpp>
+#include <utils/named_mutex.hpp>
 #include <utils/exit_callback.hpp>
 
 namespace
@@ -21,6 +22,17 @@ namespace
 
 	void add_commands(cef::cef_ui& cef_ui)
 	{
+		cef_ui.add_command("browse-folder", [](const auto&, rapidjson::Document& response)
+		{
+			response.SetNull();
+
+			std::string folder{};
+			if (utils::com::select_folder(folder))
+			{
+				response.SetString(folder, response.GetAllocator());
+			}
+		});
+
 		cef_ui.add_command("close", [&cef_ui](const auto&, auto&)
 		{
 			cef_ui.close_browser();

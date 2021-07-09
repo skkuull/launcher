@@ -8,7 +8,7 @@
                     <span>
                         <span class="input">
                             <input type="text" id="aw-install">
-                            <button>Browse</button>
+                            <button id="aw-browse">Browse</button>
                         </span>
                     </span>
                 </span>
@@ -94,5 +94,13 @@
     var nodes = document.querySelectorAll('input[name="channel"]');
     for (var i = 0; i < nodes.length; ++i) {
         nodes[i].onclick = handleChannelChange;
+    }
+
+    document.querySelector("#aw-browse").onclick = function () {
+        executeCommand('browse-folder').then(folder => {
+            if (folder) {
+                document.querySelector("#aw-install").value = folder;
+            }
+        })
     }
 </script>

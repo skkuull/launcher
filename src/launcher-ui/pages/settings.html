@@ -4,6 +4,18 @@
         <span class="content">
             <p>
                 <span class="two-grid">
+                    <span>Advanced Warfare installation</span>
+                    <span>
+                        <span class="input">
+                            <input type="text" id="aw-install">
+                            <button>Browse</button>
+                        </span>
+                    </span>
+                </span>
+            </p>
+
+            <p>
+                <span class="two-grid">
                     <span>Update channel</span>
                     <span>
                         <span class="input">
@@ -36,7 +48,6 @@
     function handleChannelChange() {
         const id = this.id;
         const newChannel = id.substring(8);
-        console.log(newChannel);
 
         window.channel.then(channel => {
             if (channel == newChannel) {

@@ -179,8 +179,8 @@ img.container {
     background: rgb(255, 61, 61);
 }
 
-#message-box{
-    background: rgba(0,0,0,0.4);
+#message-box {
+    background: rgba(0, 0, 0, 0.4);
     position: fixed;
     z-index: 9999;
     top: 0;
@@ -197,7 +197,7 @@ img.container {
     opacity: 1;
 }
 
-#message-box>.container{
+#message-box>.container {
     position: absolute;
     left: 50%;
     top: 45%;
@@ -206,7 +206,7 @@ img.container {
     background: #eff2fa;
 }
 
-#message-box .mb-buttons{
+#message-box .mb-buttons {
     border-top: 1px solid white;
     display: block;
     text-align: right;
@@ -240,6 +240,21 @@ button:hover {
     box-shadow: 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
 }
 
+input[type="text"] {
+    background: white;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #eff2fa;
+    border-radius: 5px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.07), 0 3px 6px rgba(0, 0, 0, 0.13);
+    transition: box-shadow 0.1s linear;
+    outline: 0;
+}
+
+input[type="text"]:focus {
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0);
+}
+
 .input {
     margin: 5px;
 }
@@ -252,17 +267,25 @@ button:hover {
     grid-template-areas: ". .";
 }
 
+.two-grid>* {
+    display: inline-flex;
+  align-items: center;
+}
+
+
 .two-grid>:first-child {
     text-align: left;
 }
 
 .two-grid>:last-child {
     text-align: right;
+    margin-left: auto;
 }
 
 input[type="radio"] {
     position: relative;
     margin: 5px;
+    margin-right: 7px;
 }
 
 input[type="radio"]::before {
@@ -272,10 +295,10 @@ input[type="radio"]::before {
     display: block;
     border-radius: 50%;
     left: -5px;
-    top: -3px;
+    top: -4px;
     position: absolute;
     background: white;
-    border: 1px solid rgba(0,0,0,0.08);
+    border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 input[type="radio"]::after {
@@ -285,7 +308,7 @@ input[type="radio"]::after {
     display: block;
     border-radius: 50%;
     left: 1px;
-    top: 3px;
+    top: 2px;
     position: absolute;
     background: white;
 }
@@ -299,64 +322,86 @@ input[type="radio"]:checked::after {
 }
 
 @media (prefers-color-scheme: dark) {
+
     html,
     body {
         background: #333;
         color: #bbb;
     }
+
     .container {
         background: #222;
     }
+
     .card {
         background: transparent;
     }
+
     .card>.title {
         background: #222;
     }
+
     #navigation {
         background: #222;
     }
+
     #navigation>.separator {
         background: #333;
     }
+
     #navigation>.element {
         box-shadow: 0 9px 19px rgba(0, 0, 0, 0.2), 0 15px 12px rgba(0, 0, 0, 0.2);
     }
+
     #navigation>#settings.element {
         background: #333;
     }
+
     #navigation>#settings.element>img {
         filter: invert(8%) sepia(8%) saturate(0%) hue-rotate(347deg) brightness(94%) contrast(100%);
     }
+
     #controls {
         background: #222;
         border-bottom: 1px solid #333;
     }
+
     #controls>span.button {
         border: 5px solid #222;
     }
-    #message-box>.container{
+
+    #message-box>.container {
         background: #333;
     }
-    #message-box .mb-buttons{
+
+    #message-box .mb-buttons {
         border-top: 1px solid #222;
     }
+
     #vignette {
         box-shadow: inset 0 0 2px rgb(255, 255, 255, 0.2);
     }
+
     button {
         color: #bbb;
         background: #222;
         border: 1px solid rgb(51 51 51 / 50%);
     }
+
+    input[type="text"] {
+        color: #bbb;
+        background: #222;
+        border: 1px solid rgb(51 51 51 / 50%);
+    }
+
     input[type="radio"]::before {
         background: #222;
     }
-    
+
     input[type="radio"]::after {
         background: #222;
     }
-    
+
     /*input[type="radio"]:checked::after {
         background: #777;
     }*/

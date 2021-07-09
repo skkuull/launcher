@@ -123,7 +123,7 @@ namespace
 
 	void run_as_singleton()
 	{
-		static named_mutex mutex{"xlabs-launcher"};
+		static utils::named_mutex mutex{"xlabs-launcher"};
 		if (!mutex.try_lock(3s))
 		{
 			throw std::runtime_error{"X Labs launcher is already running"};

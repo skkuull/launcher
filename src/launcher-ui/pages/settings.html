@@ -70,16 +70,13 @@
             const text = channelTexts[newChannel];
 
             window.showMessageBox("⚠ Warning",
-                text,
-                ["Yes", "Cancel"]).then(index => {
-                if (index == 0) {
-                    executeCommand('switch-channel', {
-                        'channel': newChannel
-                    });
-                } else {
-                    checkCurrentChannelRadio();
-                }
-            });
+                text, ["Yes", "Cancel"]).then(index => {
+                    if (index == 0) {
+                        executeCommand('switch-channel', newChannel);
+                    } else {
+                        checkCurrentChannelRadio();
+                    }
+                });
         });
     }
 

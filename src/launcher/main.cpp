@@ -6,6 +6,7 @@
 #include <utils/string.hpp>
 #include <utils/named_mutex.hpp>
 #include <utils/exit_callback.hpp>
+#include <utils/properties.hpp>
 
 namespace
 {
@@ -52,6 +53,48 @@ namespace
 			PostMessageA(window, WM_DELAYEDDPICHANGE, 0, 0);
 		});
 
+		cef_ui.add_command("get-property", [](const rapidjson::Value& value, rapidjson::Document& response)
+		{
+			response.SetNull();
+
+			if (!value.IsString())
+			{
+				return;
+			}
+
+			const std::string key{value.GetString(), value.GetStringLength()};
+			const auto property = utils::properties::load(key);
+			if(!property)
+			{
+				return;
+			}
+			
+			response.SetString(*property, response.GetAllocator());
+		});
+
+		cef_ui.add_command("set-property", [](const rapidjson::Value& value, auto&)
+		{
+			if (!value.IsObject())
+			{
+				return;
+			}
+
+			const auto _ = utils::properties::lock();
+
+			for(auto i = value.MemberBegin(); i != value.MemberEnd(); ++i)
+			{
+				if(!i->value.IsString())
+				{
+					continue;
+				}
+				
+				const std::string key{i->name.GetString(), i->name.GetStringLength()};
+				const std::string val{i->value.GetString(), i->value.GetStringLength()};
+
+				utils::properties::store(key, val);
+			}
+		});
+
 		cef_ui.add_command("get-channel", [&cef_ui](auto&, rapidjson::Document& response)
 		{
 			const std::string channel = updater::is_main_channel() ? "main" : "dev";
@@ -60,13 +103,12 @@ namespace
 
 		cef_ui.add_command("switch-channel", [&cef_ui](const rapidjson::Value& value, auto&)
 		{
-			if (!value.HasMember("channel") || !value["channel"].IsString())
+			if (!value.IsString())
 			{
 				return;
 			}
-
-			const auto& channel_value = value["channel"];
-			const std::string channel{channel_value.GetString(), channel_value.GetStringLength()};
+			
+			const std::string channel{value.GetString(), value.GetStringLength()};
 			const auto* const command_line = channel == "main" ? "--xlabs-channel-main" : "--xlabs-channel-develop";
 
 			utils::at_exit([command_line]()

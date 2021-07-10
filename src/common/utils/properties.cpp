@@ -29,30 +29,30 @@ namespace utils::properties
 
 			return string::convert(path) + "/xlabs/";
 		}
-	
+
 		const std::string& get_properties_file()
 		{
 			static const auto props = get_appdata_path() + "user/properties.json";
 			return props;
 		}
-	
+
 		rapidjson::Document load_properties()
 		{
-			rapidjson::Document defaultDoc{};
-			defaultDoc.SetObject();
-			
+			rapidjson::Document default_doc{};
+			default_doc.SetObject();
+
 			std::string data{};
 			const auto& props = get_properties_file();
-			if(!io::read_file(props, &data))
+			if (!io::read_file(props, &data))
 			{
-				return defaultDoc;
+				return default_doc;
 			}
 
 			rapidjson::Document doc{};
 			const rapidjson::ParseResult result = doc.Parse(data);
-			if(!result || !doc.IsObject())
+			if (!result || !doc.IsObject())
 			{
-				return defaultDoc;
+				return default_doc;
 			}
 
 			return doc;
@@ -61,7 +61,8 @@ namespace utils::properties
 		void store_properties(const rapidjson::Document& doc)
 		{
 			rapidjson::StringBuffer buffer{};
-			rapidjson::Writer<rapidjson::StringBuffer, rapidjson::Document::EncodingType, rapidjson::ASCII<>> writer(buffer);
+			rapidjson::Writer<rapidjson::StringBuffer, rapidjson::Document::EncodingType, rapidjson::ASCII<>>
+				writer(buffer);
 			doc.Accept(writer);
 
 			const std::string json(buffer.GetString(), buffer.GetLength());
@@ -83,17 +84,17 @@ namespace utils::properties
 		const auto _ = lock();
 		const auto doc = load_properties();
 
-		if(!doc.HasMember(name))
+		if (!doc.HasMember(name))
 		{
 			return {};
 		}
 
 		const auto& value = doc[name];
-		if(!value.IsString())
+		if (!value.IsString())
 		{
 			return {};
 		}
-		
+
 		return {std::string{value.GetString(), value.GetStringLength()}};
 	}
 
@@ -101,6 +102,11 @@ namespace utils::properties
 	{
 		const auto _ = lock();
 		auto doc = load_properties();
+
+		if (doc.HasMember(name))
+		{
+			doc.RemoveMember(name);
+		}
 
 		rapidjson::Value key{};
 		key.SetString(name, doc.GetAllocator());

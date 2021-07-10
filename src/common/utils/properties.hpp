@@ -2,6 +2,7 @@
 
 #include "named_mutex.hpp"
 #include <mutex>
+#include <optional>
 
 namespace utils::properties
 {

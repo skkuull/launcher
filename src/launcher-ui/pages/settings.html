@@ -7,7 +7,7 @@
                     <span>Advanced Warfare installation</span>
                     <span>
                         <span class="input">
-                            <input type="text" id="aw-install">
+                            <input type="text" id="aw-install" readonly>
                             <button id="aw-browse">Browse</button>
                         </span>
                     </span>
@@ -97,7 +97,14 @@
         executeCommand('browse-folder').then(folder => {
             if (folder) {
                 document.querySelector("#aw-install").value = folder;
+                executeCommand('set-property', {'aw-install': folder});
             }
-        })
+        });
     }
+
+    executeCommand('get-property', 'aw-install').then(folder => {
+        if(folder) {
+            document.querySelector("#aw-install").value = folder;
+        }
+    });
 </script>

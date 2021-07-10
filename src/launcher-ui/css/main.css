@@ -320,6 +320,11 @@ input[type="radio"]:checked::after {
     background: rgb(0, 135, 193);
 }
 
+::selection {
+    color: white;
+    background: rgb(0, 135, 193);
+  }
+
 @media (prefers-color-scheme: dark) {
 
     html,

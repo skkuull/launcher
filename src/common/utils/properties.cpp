@@ -103,7 +103,7 @@ namespace utils::properties
 		const auto _ = lock();
 		auto doc = load_properties();
 
-		if (doc.HasMember(name))
+		while (doc.HasMember(name))
 		{
 			doc.RemoveMember(name);
 		}

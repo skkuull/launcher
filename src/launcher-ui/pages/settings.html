@@ -4,6 +4,18 @@
         <span class="content">
             <p>
                 <span class="two-grid">
+                    <span>Advanced Warfare installation</span>
+                    <span>
+                        <span class="input">
+                            <input type="text" id="aw-install" readonly>
+                            <button id="aw-browse">Browse</button>
+                        </span>
+                    </span>
+                </span>
+            </p>
+
+            <p>
+                <span class="two-grid">
                     <span>Update channel</span>
                     <span>
                         <span class="input">
@@ -30,13 +42,20 @@
     #data {
         flex: 1 1 auto;
     }
+
+    #content .content>:first-child {
+        margin-top: 0;
+    }
+
+    #content .content>:last-child {
+        margin-bottom: 0;
+    }
 </style>
 
 <script>
     function handleChannelChange() {
         const id = this.id;
         const newChannel = id.substring(8);
-        console.log(newChannel);
 
         window.channel.then(channel => {
             if (channel == newChannel) {
@@ -51,16 +70,13 @@
             const text = channelTexts[newChannel];
 
             window.showMessageBox("⚠ Warning",
-                text,
-                ["Yes", "Cancel"]).then(index => {
-                if (index == 0) {
-                    executeCommand('switch-channel', {
-                        'channel': newChannel
-                    });
-                } else {
-                    checkCurrentChannelRadio();
-                }
-            });
+                text, ["Yes", "Cancel"]).then(index => {
+                    if (index == 0) {
+                        executeCommand('switch-channel', newChannel);
+                    } else {
+                        checkCurrentChannelRadio();
+                    }
+                });
         });
     }
 
@@ -76,4 +92,19 @@
     for (var i = 0; i < nodes.length; ++i) {
         nodes[i].onclick = handleChannelChange;
     }
+
+    document.querySelector("#aw-browse").onclick = function () {
+        executeCommand('browse-folder').then(folder => {
+            if (folder) {
+                document.querySelector("#aw-install").value = folder;
+                executeCommand('set-property', {'aw-install': folder});
+            }
+        });
+    }
+
+    executeCommand('get-property', 'aw-install').then(folder => {
+        if(folder) {
+            document.querySelector("#aw-install").value = folder;
+        }
+    });
 </script>

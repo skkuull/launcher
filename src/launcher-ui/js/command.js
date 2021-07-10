@@ -1,8 +1,8 @@
-window.executeCommand = function (command, data) {
+window.executeCommand = function(command, data) {
 
     var object = {
         command: command,
-        data: data || {},
+        data: data || null,
     }
 
     return fetch("/command", {

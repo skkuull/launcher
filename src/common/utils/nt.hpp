@@ -109,6 +109,7 @@ namespace utils::nt
 	__declspec(noreturn) void raise_hard_exception();
 	std::string load_resource(int id);
 
+	void launch_process(const std::string& process, std::string command_line);
 	void relaunch_self(std::string command_line = GetCommandLineA());
 	__declspec(noreturn) void terminate(uint32_t code = 0);
 }

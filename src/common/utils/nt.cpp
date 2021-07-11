@@ -256,10 +256,8 @@ namespace utils::nt
 		return std::string(LPSTR(LockResource(handle)), SizeofResource(nullptr, res));
 	}
 
-	void relaunch_self(std::string command_line)
+	void launch_process(const std::string& process, std::string command_line)
 	{
-		const utils::nt::library self;
-
 		STARTUPINFOA startup_info;
 		PROCESS_INFORMATION process_info;
 
@@ -270,14 +268,20 @@ namespace utils::nt
 		char current_dir[MAX_PATH];
 		GetCurrentDirectoryA(sizeof(current_dir), current_dir);
 
-		CreateProcessA(self.get_path().data(), command_line.data(), nullptr, nullptr, false, NULL, nullptr, current_dir,
+		CreateProcessA(process.data(), command_line.data(), nullptr, nullptr, false, NULL, nullptr, current_dir,
 		               &startup_info, &process_info);
 
 		if (process_info.hThread && process_info.hThread != INVALID_HANDLE_VALUE) CloseHandle(process_info.hThread);
 		if (process_info.hProcess && process_info.hProcess != INVALID_HANDLE_VALUE) CloseHandle(process_info.hProcess);
 	}
 
-	void terminate(const uint32_t code)
+	void relaunch_self(std::string command_line)
+	{
+		const utils::nt::library self;
+		launch_process(self.get_path(), std::move(command_line));
+	}
+
+	__declspec(noreturn) void terminate(const uint32_t code)
 	{
 		TerminateProcess(GetCurrentProcess(), code);
 	}

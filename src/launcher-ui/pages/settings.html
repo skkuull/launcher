@@ -95,12 +95,12 @@
 
             window.showMessageBox("⚠ Warning",
                 text, ["Yes", "Cancel"]).then(index => {
-                    if (index == 0) {
-                        executeCommand('switch-channel', newChannel);
-                    } else {
-                        checkCurrentChannelRadio();
-                    }
-                });
+                if (index == 0) {
+                    executeCommand('switch-channel', newChannel);
+                } else {
+                    checkCurrentChannelRadio();
+                }
+            });
         });
     }
 
@@ -122,7 +122,9 @@
         executeCommand('browse-folder').then(folder => {
             if (folder) {
                 document.querySelector("#aw-install").value = folder;
-                executeCommand('set-property', {'aw-install': folder});
+                executeCommand('set-property', {
+                    'aw-install': folder
+                });
             }
         });
     }
@@ -131,33 +133,40 @@
         executeCommand('browse-folder').then(folder => {
             if (folder) {
                 document.querySelector("#ghosts-install").value = folder;
-                executeCommand('set-property', {'ghosts-install': folder});
+                executeCommand('set-property', {
+                    'ghosts-install': folder
+                });
             }
         });
     }
 
     document.querySelector("#mw2-browse").onclick = function () {
-        executeCommand('mw2-folder').then(folder => {
+        executeCommand('browse-folder').then(folder => {
             if (folder) {
                 document.querySelector("#mw2-install").value = folder;
-                executeCommand('set-property', {'mw2-install': folder});
+                executeCommand('set-property', {
+                    'mw2-install': folder
+                });
             }
         });
     }
 
     // get path already set in config if path is set
     executeCommand('get-property', 'aw-install').then(folder => {
-        if (folder)
+        if (folder) {
             document.querySelector("#aw-install").value = folder;
+        }
     });
 
     executeCommand('get-property', 'ghosts-install').then(folder => {
-        if (folder)
+        if (folder) {
             document.querySelector("#ghosts-install").value = folder;
+        }
     });
 
     executeCommand('get-property', 'mw2-install').then(folder => {
-        if (folder)
+        if (folder) {
             document.querySelector("#mw2-install").value = folder;
+        }
     });
 </script>

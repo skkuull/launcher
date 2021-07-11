@@ -41,8 +41,8 @@ img.container {
     transition: box-shadow 0.1s linear;
 }
 
-.a.card:active {
-    box-shadow: 0 2px 19px rgba(0, 17, 255, 0.103), 0 11px 40px rgba(51, 146, 255, 0.15);
+.a.card:hover {
+    box-shadow: 0 2px 19px rgba(0, 17, 255, 0), 0 11px 40px rgba(51, 146, 255, 0);
 }
 
 .card>.title {
@@ -125,7 +125,7 @@ img.container {
 }
 
 #navigation>.element.active {
-    box-shadow: 0 2px 19px rgba(0, 17, 255, 0.103), 0 11px 40px rgba(51, 146, 255, 0.15);
+    box-shadow: 0 2px 19px rgba(0, 17, 255, 0), 0 11px 40px rgba(51, 146, 255, 0);
 }
 
 #content {
@@ -257,11 +257,7 @@ input[type="text"]:focus {
 }
 
 .two-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-    gap: 0px 0px;
-    grid-template-areas: ". .";
+    display: flex;
 }
 
 .two-grid>* {
@@ -272,11 +268,14 @@ input[type="text"]:focus {
 
 .two-grid>:first-child {
     text-align: left;
+    flex: 0 1 auto;
 }
 
 .two-grid>:last-child {
     text-align: right;
     margin-left: auto;
+    justify-content: flex-end;
+    flex: 1 1 auto;
 }
 
 input[type="radio"] {

@@ -98,7 +98,7 @@ namespace cef
 		CefWindowInfo window_info;
 		window_info.SetAsPopup(nullptr, "X Labs"s + (updater::is_main_channel() ? "" : " (DEV-BUILD)"));
 		window_info.width = 800; //GetSystemMetrics(SM_CXVIRTUALSCREEN);
-		window_info.height = 500; //GetSystemMetrics(SM_CYVIRTUALSCREEN);
+		window_info.height = 500 - 25; //GetSystemMetrics(SM_CYVIRTUALSCREEN);
 		window_info.x = (GetSystemMetrics(SM_CXSCREEN) - window_info.width) / 2;
 		window_info.y = (GetSystemMetrics(SM_CYSCREEN) - window_info.height) / 2;
 		window_info.style = WS_POPUP | WS_THICKFRAME | WS_CAPTION;

@@ -75,6 +75,10 @@ function initialize() {
     adjustChannelElements();
 }
 
+window.showSettings = function() {
+    document.querySelector("#navigation>#settings.element").click();
+}
+
 function initializeNavigation() {
     var elements = document.querySelectorAll("#navigation>.element");
     elements.forEach(e => {
